@@ -8,18 +8,16 @@ class PerfilModel {
         $this->conexion = $conexion;
     }
 
-    /**
-     * Obtiene los datos de la persona según el rol del usuario.
-     * Rol 0 = Paciente → tabla paciente
-     * Otro rol = Empleado → tabla empleado
-     */
+    /* Obtiene los datos de la persona según el rol del usuario. */
     public function getPersonaPorUsuario(int $id_Usuario, int $id_Rol): ?array {
         if ($id_Rol == 0) {
-            $sql = "SELECT p.* FROM paciente pac 
+            $sql = "SELECT p.*, pac.id_Paciente, pac.Observaciones_Paciente
+                    FROM paciente pac 
                     JOIN persona p ON pac.id_Persona = p.id_Persona 
                     WHERE pac.id_Usuario = ?";
         } else {
-            $sql = "SELECT p.* FROM empleado e 
+            $sql = "SELECT p.*, e.id_Empleado, e.Especialidad, e.CUIL, e.Empleado_CBU
+                    FROM empleado e 
                     JOIN persona p ON e.id_Persona = p.id_Persona 
                     WHERE e.id_Usuario = ?";
         }
@@ -31,10 +29,7 @@ class PerfilModel {
         return $result->fetch_assoc() ?: null;
     }
 
-    /**
-     * Obtiene todos los turnos de un paciente con información
-     * del servicio y del terapeuta asignado.
-     */
+    /* Obtiene todos los turnos de un paciente con información*/
     public function getTurnosPorPaciente(int $id_Paciente): array {
         $sql = "SELECT t.id_Turno, t.Fecha_Turno, t.Hora_Turno, t.Estado_Turno,
                        s.Nombre_servicio, s.Costo,
@@ -53,10 +48,7 @@ class PerfilModel {
         return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }
 
-    /**
-     * Elimina un turno verificando que pertenezca al paciente
-     * (evita que un usuario borre turnos ajenos).
-     */
+    /*Elimina un turno verificando que pertenezca al paciente.*/
     public function cancelarTurno(int $id_Turno, int $id_Paciente): bool {
         $sql  = "DELETE FROM turno WHERE id_Turno = ? AND id_Paciente = ?";
         $stmt = $this->conexion->prepare($sql);
@@ -64,9 +56,7 @@ class PerfilModel {
         return $stmt->execute();
     }
 
-    /**
-     * Actualiza los datos personales en la tabla persona.
-     */
+    /*Actualiza los datos personales en la tabla persona.*/
     public function actualizarPersona(
         int    $id_Persona,
         string $nombre,
@@ -96,13 +86,83 @@ class PerfilModel {
         return $stmt->execute();
     }
 
-    /**
-     * Actualiza el correo electrónico en la tabla usuario.
-     */
+    /*Actualiza el correo electrónico en la tabla usuario.*/
     public function actualizarCorreo(int $id_Usuario, string $correo): bool {
         $sql  = "UPDATE usuario SET Correo_E = ? WHERE id_Usuario = ?";
         $stmt = $this->conexion->prepare($sql);
         $stmt->bind_param("si", $correo, $id_Usuario);
         return $stmt->execute();
+    }
+
+    // lo q sigue es lo del abm de cuenta, q se me había pasado agregar al model
+
+    /*Verifica si la contraseña actual es correcta y retorna el hash almacenado.*/
+    public function getContrasena(int $id_Usuario): ?string {
+        $sql  = "SELECT Usuario_Contraseña FROM usuario WHERE id_Usuario = ?";
+        $stmt = $this->conexion->prepare($sql);
+        $stmt->bind_param("i", $id_Usuario);
+        $stmt->execute();
+        $row = $stmt->get_result()->fetch_assoc();
+        return $row['Usuario_Contraseña'] ?? null;
+    }
+
+    /*Actualiza la contraseña del usuario con el nuevo hash.*/
+    public function cambiarContrasena(int $id_Usuario, string $nueva_hash): bool {
+        $sql  = "UPDATE usuario SET Usuario_Contraseña = ? WHERE id_Usuario = ?";
+        $stmt = $this->conexion->prepare($sql);
+        $stmt->bind_param("si", $nueva_hash, $id_Usuario);
+        return $stmt->execute();
+    }
+
+    /*Elimina la cuenta de un paciente en cascada: turno → paciente → persona → usuario*/
+    public function eliminarPaciente(int $id_Paciente, int $id_Persona, int $id_Usuario): bool {
+        $this->conexion->begin_transaction();
+        try {
+            $stmt = $this->conexion->prepare("DELETE FROM turno WHERE id_Paciente = ?");
+            $stmt->bind_param("i", $id_Paciente);
+            $stmt->execute();
+
+            $stmt = $this->conexion->prepare("DELETE FROM paciente WHERE id_Paciente = ?");
+            $stmt->bind_param("i", $id_Paciente);
+            $stmt->execute();
+
+            $stmt = $this->conexion->prepare("DELETE FROM persona WHERE id_Persona = ?");
+            $stmt->bind_param("i", $id_Persona);
+            $stmt->execute();
+
+            $stmt = $this->conexion->prepare("DELETE FROM usuario WHERE id_Usuario = ?");
+            $stmt->bind_param("i", $id_Usuario);
+            $stmt->execute();
+
+            $this->conexion->commit();
+            return true;
+        } catch (Exception $e) {
+            $this->conexion->rollback();
+            return false;
+        }
+    }
+
+    /*Elimina la cuenta de un empleado en cascada: empleado → persona → usuario*/
+    public function eliminarEmpleado(int $id_Empleado, int $id_Persona, int $id_Usuario): bool {
+        $this->conexion->begin_transaction();
+        try {
+            $stmt = $this->conexion->prepare("DELETE FROM empleado WHERE id_Empleado = ?");
+            $stmt->bind_param("i", $id_Empleado);
+            $stmt->execute();
+
+            $stmt = $this->conexion->prepare("DELETE FROM persona WHERE id_Persona = ?");
+            $stmt->bind_param("i", $id_Persona);
+            $stmt->execute();
+
+            $stmt = $this->conexion->prepare("DELETE FROM usuario WHERE id_Usuario = ?");
+            $stmt->bind_param("i", $id_Usuario);
+            $stmt->execute();
+
+            $this->conexion->commit();
+            return true;
+        } catch (Exception $e) {
+            $this->conexion->rollback();
+            return false;
+        }
     }
 }

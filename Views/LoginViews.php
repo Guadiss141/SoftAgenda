@@ -9,7 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
 
 <style>
-/* RESET */
+
 * {
     margin: 0;
     padding: 0;
@@ -17,7 +17,6 @@
     font-family: "Poppins", sans-serif;
 }
 
-/* FONDO */
 body {
     display: flex;
     justify-content: center;
@@ -27,7 +26,6 @@ body {
     background-size: cover;
 }
 
-/* OSCURECER FONDO */
 body::before {
     content: "";
     position: absolute;
@@ -37,7 +35,6 @@ body::before {
     z-index: 0;
 }
 
-/* HEADER */
 .header {
     position: absolute;
     top: 0;
@@ -61,7 +58,6 @@ body::before {
     margin-left: 20px;
 }
 
-/* CONTENEDOR LOGIN */
 .wrapper {
     position: relative;
     width: 420px;
@@ -75,13 +71,11 @@ body::before {
     z-index: 1;
 }
 
-/* TITULO */
 .wrapper h1 {
     font-size: 32px;
     text-align: center;
 }
 
-/* INPUTS */
 .input-box {
     position: relative;
     width: 100%;
@@ -112,7 +106,6 @@ body::before {
     transform: translateY(-50%);
 }
 
-/* BOTON */
 .btn {
     width: 100%;
     height: 45px;
@@ -124,7 +117,6 @@ body::before {
     cursor: pointer;
 }
 
-/* LINK REGISTRO */
 .register-link {
     text-align: center;
     margin-top: 15px;
@@ -136,7 +128,6 @@ body::before {
     font-weight: 600;
 }
 
-/* ERROR */
 .error {
     color: #ff6b6b;
     text-align: center;

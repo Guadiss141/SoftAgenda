@@ -221,7 +221,7 @@
 
                                 <div class="action-links">
 
-                                    <a href="editar_usuario.php?id=<?= $row['id_Usuario'] ?>"
+                                    <a href="../Views/editar_usuario.php?id=<?= $row['id_Usuario'] ?>"
                                        class="btn btn-primary btn-small">
                                         Editar
                                     </a>
@@ -259,13 +259,11 @@
 
     <div class="button-group" style="justify-content: center;">
 
-        <a href="registro_terapeuta.php" class="btn btn-success">
+        <a href="../Controllers/RegistroTerapeutaController.php" class="btn btn-success">
             Registrar Nuevo Terapeuta
         </a>
 
-        <a href="index.php" class="btn btn-secondary">
-            Volver al Inicio
-        </a>
+        <a href="../index.php" class="btn btn-secondary">Volver al Inicio</a>
 
     </div>
 

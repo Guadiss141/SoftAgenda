@@ -64,7 +64,7 @@
         </div>
     <?php endif; ?>
 
-    <form action="registro_terapeuta.php" method="POST">
+    <form action="../Controllers/RegistroTerapeutaController.php" method="POST">
 
         <div class="form-row">
             <div class="form-group">
@@ -111,7 +111,7 @@
         </div>
 
         <div class="button-group">
-            <a href="admin_usuarios.php" class="btn btn-secondary">Cancelar y Volver</a>
+            <a href="../Controllers/admin_usuariosController.php" class="btn btn-secondary">Cancelar y Volver</a>
             <button type="submit" class="btn btn-primary">Registrar Terapeuta</button>
         </div>
 

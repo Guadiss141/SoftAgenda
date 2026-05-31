@@ -3,8 +3,8 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Ensure $usuario exists to avoid undefined variable notices in the view
 $usuario = $usuario ?? ($_SESSION['nombre_usuario'] ?? null);
+$id_Rol  = $_SESSION['id_Rol'] ?? null;
 ?>
 
 <!DOCTYPE html>
@@ -32,7 +32,6 @@ body {
     background-position: center;
 }
 
-/* HEADER */
 .header {
     position: fixed;
     top: 0;
@@ -52,7 +51,6 @@ body {
     text-decoration: none;
 }
 
-/* NAV NORMAL */
 .nav a {
     font-size: 0.55cm;
     color: #fff;
@@ -74,11 +72,8 @@ body {
     transition: .5s;
 }
 
-.nav a:hover::after {
-    transform: scaleX(1);
-}
+.nav a:hover::after { transform: scaleX(1); }
 
-/* DROPDOWN */
 .dropdown {
     position: relative;
     display: inline-block;
@@ -93,9 +88,7 @@ body {
     gap: 5px;
 }
 
-.dropdown-btn i {
-    font-size: 26px;
-}
+.dropdown-btn i { font-size: 26px; }
 
 .dropdown-content {
     display: none;
@@ -125,11 +118,8 @@ body {
     border-radius: 8px;
 }
 
-.show {
-    display: block;
-}
+.show { display: block; }
 
-/* HERO */
 .home {
     width: 100%;
     height: 100vh;
@@ -144,13 +134,9 @@ body {
     padding-left: 100px;
 }
 
-.content h2 {
-    font-size: 1.5cm;
-}
+.content h2 { font-size: 1.5cm; }
 
-.content p {
-    margin: 19px 0 40px;
-}
+.content p { margin: 19px 0 40px; }
 
 .content a {
     color: #fff;
@@ -171,31 +157,47 @@ body {
 <body>
 
 <header class="header">
-    <a href="../index.php" class="logo">Beauty - SPA</a>
+    <a href="/Spaa/Views/Index.php" class="logo">Beauty - SPA</a>
 
-    <!-- NAVBAR -->
     <nav class="nav">
 
     <?php if (!$usuario): ?>
 
-        <a href="Login.php">Iniciar Sesión</a>
-        <a href="Registro.php">Registrarse</a>
+        <a href="/Spaa/Views/Login.php">Iniciar Sesion</a>
+        <a href="/Spaa/Views/Registro.php">Registrarse</a>
 
     <?php else: ?>
 
-        <!-- Dropdown cuando está logueado -->
-<div class="dropdown">
-    <div class="dropdown-btn">
-        Hola, <?php echo htmlspecialchars($usuario); ?>
-        <i class='bx bx-chevron-down'></i>
-    </div>
+        <div class="dropdown">
+            <div class="dropdown-btn">
+                Hola, <?php echo htmlspecialchars($usuario); ?>
+                <i class='bx bx-chevron-down'></i>
+            </div>
 
-    <div class="dropdown-content">
-        <a href="perfil.php"><i class='bx bx-user'></i> Perfil</a>
-        <a href="../Controllers/TurnoController.php"><i class='bx bx-calendar'></i> Mis Turnos</a>
-        <a href="logout.php"><i class='bx bx-log-out'></i> Cerrar Sesión</a>
-    </div>
-</div>
+            <div class="dropdown-content">
+                <a href="/Spaa/Views/perfil.php">
+                    <i class='bx bx-user'></i> Perfil
+                </a>
+
+                <?php if ($id_Rol == 0): ?>
+                    <a href="/Spaa/Controllers/CitasController.php">
+                        <i class='bx bx-calendar'></i> Mis Turnos
+                    </a>
+                <?php elseif ($id_Rol == 2): ?>
+                    <a href="/Spaa/Controllers/CitasController.php">
+                        <i class='bx bx-calendar-check'></i> Mis Citas
+                    </a>
+                <?php elseif ($id_Rol == 3): ?>
+                    <a href="/Spaa/Controllers/admin_usuariosController.php">
+                        <i class='bx bx-cog'></i> Gestion de Usuarios
+                    </a>
+                <?php endif; ?>
+
+                <a href="/Spaa/Views/Logout.php">
+                    <i class='bx bx-log-out'></i> Cerrar Sesion
+                </a>
+            </div>
+        </div>
 
     <?php endif; ?>
 
@@ -205,19 +207,17 @@ body {
 <section class="home">
     <div class="content">
         <h2>Bienvenido a Beauty SPA</h2>
-        <p>A veces lo único que necesitamos es una pausa.
+        <p>A veces lo unico que necesitamos es una pausa.
         Un lugar donde sentirnos bien, y recordar que
-        cuidarnos también es una forma de amarnos.</p>
+        cuidarnos tambien es una forma de amarnos.</p>
 
-        <a href="../Controllers/TurnoController.php">Reserva tu cita</a>
+        <a href="/Spaa/Controllers/TurnoController.php">Reserva tu cita</a>
     </div>
 </section>
 
-<!-- SCRIPT DROPDOWN -->
 <script>
 document.addEventListener("DOMContentLoaded", function() {
-
-    const btn = document.querySelector(".dropdown-btn");
+    const btn  = document.querySelector(".dropdown-btn");
     const menu = document.querySelector(".dropdown-content");
 
     if (btn) {
@@ -226,13 +226,11 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // Cerrar al hacer clic afuera
     document.addEventListener("click", (e) => {
         if (btn && !btn.contains(e.target) && !menu.contains(e.target)) {
             menu.classList.remove("show");
         }
     });
-
 });
 </script>
 

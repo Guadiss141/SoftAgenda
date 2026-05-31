@@ -10,7 +10,7 @@ if ($user_data) {
     $conexion = new mysqli("localhost", "root", "345756", "gestionspabd");
     
     if (!$conexion->connect_error) {
-        // 1. Buscar en tabla Empleado
+        // Buscar en tabla Empleado
         $sql_emp = "SELECT e.id_Empleado, e.id_Rol FROM empleado e WHERE e.id_Usuario = ?";
         $stmt_emp = $conexion->prepare($sql_emp);
         $stmt_emp->bind_param("i", $user_data['id_Usuario']);
@@ -22,7 +22,7 @@ if ($user_data) {
             $_SESSION['id_Empleado'] = $datos_emp['id_Empleado'];
             $_SESSION['id_Rol'] = $datos_emp['id_Rol'];
         } else {
-            // 2. Buscar en tabla Paciente
+            // Buscar en tabla Paciente
             $sql_pac = "SELECT pac.id_Paciente FROM paciente pac WHERE pac.id_Usuario = ?";
             $stmt_pac = $conexion->prepare($sql_pac);
             $stmt_pac->bind_param("i", $user_data['id_Usuario']);

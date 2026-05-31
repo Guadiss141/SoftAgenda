@@ -1,13 +1,12 @@
 <?php
 
-require_once __DIR__ . '/../models/RegistroTerapeutaModel.php';
+require_once __DIR__ . '/../Models/RegistroTerapeutaModel.php';
 
-class TerapeutaController {
+class RegistroTerapeutaController {
 
-    private RegistroTerapeutaModel $model;
+    private TerapeutaModel $model;
 
     public function __construct() {
-        // Iniciar sesión
         if (session_status() === PHP_SESSION_NONE) {
             session_set_cookie_params(0, '/');
             session_start();
@@ -15,7 +14,7 @@ class TerapeutaController {
 
         // Solo el Administrador (rol 3) puede acceder
         if (!isset($_SESSION['id_Rol']) || $_SESSION['id_Rol'] != 3) {
-            header("Location: Login.php");
+            header("Location: ../Views/Login.php");
             exit();
         }
 
@@ -27,9 +26,6 @@ class TerapeutaController {
         $this->model = new TerapeutaModel($conexion);
     }
 
-    /**
-     * Punto de entrada: decide si mostrar el form o procesar el registro.
-     */
     public function manejarRequest(): void {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $this->registrar();
@@ -38,18 +34,11 @@ class TerapeutaController {
         }
     }
 
-    // ─────────────────────────────────────────────
-    // Acción: Mostrar formulario (GET)
-    // ─────────────────────────────────────────────
     private function mostrarFormulario(string $error = ''): void {
-        require_once __DIR__ . '/../views/registro_terapeuta_view.php';
+        require_once __DIR__ . '/../Views/registro_terapeuta.php';
     }
 
-    // ─────────────────────────────────────────────
-    // Acción: Procesar registro (POST)
-    // ─────────────────────────────────────────────
     private function registrar(): void {
-        // Leer y sanear inputs
         $nombre               = trim($_POST['nombre']               ?? '');
         $apellido             = trim($_POST['apellido']             ?? '');
         $usuario_nombre       = trim($_POST['usuario_nombre']       ?? '');
@@ -59,7 +48,6 @@ class TerapeutaController {
         $especialidad         = trim($_POST['especialidad']         ?? '');
         $cuil                 = trim($_POST['cuil']                 ?? '');
 
-        // Validaciones
         if ($contrasena !== $confirmar_contrasena) {
             $this->mostrarFormulario('Las contraseñas no coinciden.');
             return;
@@ -70,7 +58,6 @@ class TerapeutaController {
             return;
         }
 
-        // Hashear contraseña antes de guardar
         $contrasena_hash = password_hash($contrasena, PASSWORD_DEFAULT);
 
         $exito = $this->model->registrarTerapeuta(
@@ -79,10 +66,14 @@ class TerapeutaController {
         );
 
         if ($exito) {
-            header("Location: ../views/admin_usuarios.php?mensaje=Terapeuta registrado con éxito");
+            header("Location: ../Controllers/admin_usuariosController.php?msg=terapeuta_registrado");
             exit();
         } else {
             $this->mostrarFormulario('Ocurrió un error al registrar el terapeuta. Intente nuevamente.');
         }
     }
 }
+
+$controller = new RegistroTerapeutaController();
+$controller->manejarRequest();
+?>

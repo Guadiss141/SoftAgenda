@@ -6,7 +6,7 @@ class EmpleadoController {
     public function registrarTerapeuta($datosPost) {
         session_start();
 
-        // Seguridad: Verificar que sea Admin[cite: 1]
+        // Seguridad: Verificar que sea Admin
         if (!isset($_SESSION['id_Rol']) || $_SESSION['id_Rol'] != 3) {
             return "Acceso denegado. Solo los administradores pueden crear terapeutas.";
         }

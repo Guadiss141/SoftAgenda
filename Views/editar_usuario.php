@@ -5,9 +5,7 @@
 
     <meta charset="UTF-8">
 
-    <title>
-        Editar Usuario - SoftAgenda
-    </title>
+    <title>Editar Usuario - SoftAgenda</title>
 
     <style>
 
@@ -24,10 +22,7 @@
         body::before {
             content: "";
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(253, 251, 247, 0.88);
             z-index: -1;
         }
@@ -95,15 +90,8 @@
             text-align: center;
         }
 
-        .btn-primary {
-            background: #8da399;
-            color: white;
-        }
-
-        .btn-secondary {
-            background: #dcd3cb;
-            color: #5c4a3d;
-        }
+        .btn-primary   { background: #8da399; color: white; }
+        .btn-secondary { background: #dcd3cb; color: #5c4a3d; }
 
         .btn:hover {
             opacity: 0.9;
@@ -123,11 +111,8 @@
             margin-bottom: 20px;
         }
 
-        .alert-danger {
-            background: #f9ebea;
-            color: #78281f;
-            border-left: 4px solid #d98880;
-        }
+        .alert-success { background: #e9edc9; color: #4e5a37; border-left: 4px solid #a3b18a; }
+        .alert-danger  { background: #f9ebea; color: #78281f; border-left: 4px solid #d98880; }
 
     </style>
 
@@ -135,179 +120,103 @@
 
 <body>
 
+<?php
+//Seguridad: solo admin 
+if (session_status() === PHP_SESSION_NONE) session_start();
+if (!isset($_SESSION['id_Rol']) || $_SESSION['id_Rol'] != 3) {
+    header("Location: Login.php");
+    exit();
+}
+
+//Cargar datos del usuario a editar 
+require_once '../Models/Usuario.php';
+$conexion = new mysqli("localhost", "root", "345756", "gestionspabd");
+if ($conexion->connect_error) die("Error de conexión");
+
+$modelo  = new Usuario($conexion);
+$mensaje = '';
+
+if (!isset($_GET['id'])) {
+    header("Location: admin_usuarios.php");
+    exit();
+}
+
+$id = intval($_GET['id']);
+$user = $modelo->obtenerPorId($id);
+
+if (!$user) {
+    header("Location: admin_usuarios.php?error=usuario_no_encontrado");
+    exit();
+}
+?>
+
 <div class="container">
 
-    <h1>
-        Editar Usuario
-    </h1>
+    <h1>Editar Usuario</h1>
 
     <?php if (!empty($mensaje)) echo $mensaje; ?>
 
-    <form
-        action=""
-        method="POST"
-    >
+    <form action="../Controllers/UsuarioController.php?action=editar" method="POST">
 
-        <input
-            type="hidden"
-            name="id_Usuario"
-            value="<?= htmlspecialchars($user['id_Usuario']) ?>"
-        >
+        <input type="hidden" name="id_Usuario" value="<?= htmlspecialchars($user['id_Usuario']) ?>">
 
         <div class="form-row">
-
             <div class="form-group">
-
-                <label>
-                    Nombre:
-                </label>
-
-                <input
-                    type="text"
-                    name="nombre"
-                    value="<?= htmlspecialchars($user['Persona_Nombre'] ?? '') ?>"
-                    required
-                >
-
+                <label>Nombre:</label>
+                <input type="text" name="nombre"
+                       value="<?= htmlspecialchars($user['Persona_Nombre'] ?? '') ?>" required>
             </div>
-
             <div class="form-group">
-
-                <label>
-                    Apellido:
-                </label>
-
-                <input
-                    type="text"
-                    name="apellido"
-                    value="<?= htmlspecialchars($user['Persona_Apellido'] ?? '') ?>"
-                    required
-                >
-
+                <label>Apellido:</label>
+                <input type="text" name="apellido"
+                       value="<?= htmlspecialchars($user['Persona_Apellido'] ?? '') ?>" required>
             </div>
-
         </div>
 
         <div class="form-row">
-
             <div class="form-group">
-
-                <label>
-                    Teléfono:
-                </label>
-
-                <input
-                    type="text"
-                    name="telefono"
-                    value="<?= htmlspecialchars($user['Persona_Telefono'] ?? '') ?>"
-                    required
-                >
-
+                <label>Teléfono:</label>
+                <input type="text" name="telefono"
+                       value="<?= htmlspecialchars($user['Persona_Telefono'] ?? '') ?>" required>
             </div>
-
             <div class="form-group">
-
-                <label>
-                    Domicilio:
-                </label>
-
-                <input
-                    type="text"
-                    name="domicilio"
-                    value="<?= htmlspecialchars($user['Persona_Domicilio'] ?? '') ?>"
-                    required
-                >
-
+                <label>Domicilio:</label>
+                <input type="text" name="domicilio"
+                       value="<?= htmlspecialchars($user['Persona_Domicilio'] ?? '') ?>" required>
             </div>
-
         </div>
 
         <div class="form-row">
-
             <div class="form-group">
-
-                <label>
-                    Nombre de Usuario:
-                </label>
-
-                <input
-                    type="text"
-                    name="usuario_nombre"
-                    value="<?= htmlspecialchars($user['Usuario_Nombre'] ?? '') ?>"
-                    required
-                >
-
+                <label>Nombre de Usuario:</label>
+                <input type="text" name="usuario_nombre"
+                       value="<?= htmlspecialchars($user['Usuario_Nombre'] ?? '') ?>" required>
             </div>
-
             <div class="form-group">
-
-                <label>
-                    Correo Electrónico:
-                </label>
-
-                <input
-                    type="email"
-                    name="correo"
-                    value="<?= htmlspecialchars($user['Correo_E'] ?? '') ?>"
-                    required
-                >
-
+                <label>Correo Electrónico:</label>
+                <input type="email" name="correo"
+                       value="<?= htmlspecialchars($user['Correo_E'] ?? '') ?>" required>
             </div>
-
         </div>
 
         <?php if ($user['id_Rol'] == 2): ?>
-
-            <div class="form-row">
-
-                <div class="form-group">
-
-                    <label>
-                        Especialidad:
-                    </label>
-
-                    <input
-                        type="text"
-                        name="especialidad"
-                        value="<?= htmlspecialchars($user['Especialidad'] ?? '') ?>"
-                    >
-
-                </div>
-
-                <div class="form-group">
-
-                    <label>
-                        CUIL:
-                    </label>
-
-                    <input
-                        type="text"
-                        name="cuil"
-                        value="<?= htmlspecialchars($user['CUIL'] ?? '') ?>"
-                    >
-
-                </div>
-
+        <div class="form-row">
+            <div class="form-group">
+                <label>Especialidad:</label>
+                <input type="text" name="especialidad"
+                       value="<?= htmlspecialchars($user['Especialidad'] ?? '') ?>">
             </div>
-
+            <div class="form-group">
+                <label>CUIL:</label>
+                <input type="text" name="cuil"
+                       value="<?= htmlspecialchars($user['CUIL'] ?? '') ?>">
+            </div>
+        </div>
         <?php endif; ?>
 
         <div class="button-group">
-
-            <a
-                href="../Controllers/UsuarioController.php"
-                class="btn btn-secondary"
-            >
-                Cancelar y Volver
-            </a>
-
-            <button
-                type="submit"
-                class="btn btn-primary"
-            >
-                Guardar Cambios
-            </button>
-
+            <a href="../Controllers/admin_usuariosController.php" class="btn btn-secondary">Cancelar y Volver</a>
+            <button type="submit" class="btn btn-primary">Guardar Cambios</button>
         </div>
 
     </form>
