@@ -1,23 +1,5 @@
 <?php
-
-if (session_status() === PHP_SESSION_NONE) {
-    session_set_cookie_params(0, '/');
-    session_start();
-}
-
-if (!isset($_SESSION['id_Rol']) || $_SESSION['id_Rol'] != 3) {
-    header("Location: ../Views/Login.php");
-    exit();
-}
-
-require_once '../Models/admin_usuariosModel.php';
-require_once '../Models/Usuario.php';
-
-$conexion = admin_usuariosModel::conectar();
-
-$modeloUsuario = new Usuario($conexion);
-
-$filtro = $_GET['filtro'] ?? 'todos';
-$usuarios = $modeloUsuario->listarTodos($filtro);
-
-require_once '../Views/admin_usuarios.php';
+// STUB - redirige a la ubicación nueva tras el vertical slicing
+// TODO: eliminar este archivo y actualizar la tabla `modulo` en la limpieza final
+header("Location: /Spaa/AdminUsuarios/admin_usuariosController.php");
+exit;

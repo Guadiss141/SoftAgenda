@@ -10,6 +10,7 @@ if (!isset($_SESSION['id_Usuario']) || !isset($_SESSION['id_Rol'])) {
 }
 
 require_once __DIR__ . '/Turno.php';
+require_once __DIR__ . '/Auditoria.php';
 
 $conexion = new mysqli("localhost", "root", "345756", "gestionspabd");
 if ($conexion->connect_error) {
@@ -57,16 +58,50 @@ if ($action == 'crear' && $_SERVER['REQUEST_METHOD'] == 'POST') {
         exit();
     }
 
-    $resultado = $modeloTurno->crearTurno($id_Paciente, $id_Servicio, $id_Emp, $fecha, $hora);
-    header("Location: TurnoController.php?status=" . ($resultado ? 'success' : 'error'));
-    exit();
+   $resultado = $modeloTurno->crearTurno($id_Paciente, $id_Servicio, $id_Emp, $fecha, $hora);
+
+if ($resultado) {
+    $auditoria = new Auditoria($conexion);
+    $auditoria->registrar(  // Registrar en auditoría la acción de crear turno
+        $resultado, // si crearTurno() devuelve el id del turno creado; si devuelve true/false, ver nota abajo
+        $id_Usuario,
+        'Turno',
+        'CREAR',
+        null, // no hay dato anterior, es nuevo
+        json_encode([
+            'id_Paciente' => $id_Paciente,
+            'id_Servicio' => $id_Servicio,
+            'id_Empleado' => $id_Emp,
+            'Fecha' => $fecha,
+            'Hora' => $hora
+        ])
+    );
+}
+
+header("Location: TurnoController.php?status=" . ($resultado ? 'success' : 'error'));
+exit();
 }
 
 
 // ELIMINAR TURNO
 if ($action == 'eliminar' && $_SERVER['REQUEST_METHOD'] == 'POST') {
-    $id_Turno  = intval($_POST['id_turno']);
+    $id_Turno = intval($_POST['id_turno']);
+
+    $turnoAnterior = $modeloTurno->obtenerTurnoPorIdSimple($id_Turno);
     $resultado = $modeloTurno->eliminarTurno($id_Turno);
+
+    if ($resultado) {
+        $auditoria = new Auditoria($conexion);
+        $auditoria->registrar(
+            $id_Turno,
+            $id_Usuario,
+            'Turno',
+            'ELIMINAR',
+            json_encode($turnoAnterior),
+            null
+        );
+    }
+
     header("Location: TurnoController.php?status=" . ($resultado ? 'success' : 'error'));
     exit();
 }
@@ -102,16 +137,31 @@ if ($action == 'bloquear' && $_SERVER['REQUEST_METHOD'] == 'POST') {
         exit();
     }
 
-    $pacientes_afectados = $modeloTurno->bloquearDia($id_Empleado, $fecha, $motivo);
+   $turnos_afectados = $modeloTurno->bloquearDia($id_Empleado, $fecha, $motivo);
 
-    if ($pacientes_afectados !== false) {
-        $_SESSION['pacientes_afectados'] = $pacientes_afectados;
-        $_SESSION['fecha_bloqueada']     = $fecha;
-        header("Location: TurnoController.php?status=bloqueado_ok");
-    } else {
-        header("Location: TurnoController.php?status=error");
+if ($turnos_afectados !== false) {
+    // Registrar en auditoría cada turno cancelado por el bloqueo del día
+    require_once __DIR__ . '/Auditoria.php';
+    $auditoria = new Auditoria($conexion);
+    foreach ($turnos_afectados as $turno) {
+        $auditoria->registrar(
+            $turno['id_Turno'],
+            $id_Usuario,
+            'Turno',
+            'CANCELAR',
+            json_encode($turno),
+            null
+        );
     }
-    exit();
+
+    $_SESSION['pacientes_afectados'] = $turnos_afectados;
+    $_SESSION['fecha_bloqueada']     = $fecha;
+    header("Location: TurnoController.php?status=bloqueado_ok");
+} else {
+    header("Location: TurnoController.php?status=error");
+}
+exit();
+
 }
 
 

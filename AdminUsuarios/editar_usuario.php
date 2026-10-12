@@ -62,6 +62,7 @@ if (!$user) {
             background: var(--cream);
             color: var(--dark);
             min-height: 100vh;
+            transition: background 0.3s, color 0.3s;
         }
 
         .container {
@@ -71,6 +72,7 @@ if (!$user) {
             padding: 40px;
             border-radius: 32px;
             box-shadow: 0 8px 40px rgba(232,121,160,0.12);
+            transition: background 0.3s;
         }
 
         h1 {
@@ -106,7 +108,7 @@ if (!$user) {
             border-radius: 12px;
             border: 1.5px solid #eee;
             background: #fff;
-            transition: border-color 0.3s, background 0.3s;
+            transition: border-color 0.3s, background 0.3s, color 0.3s;
             font-family: 'DM Sans', sans-serif;
             font-size: 0.88rem;
             color: var(--dark);
@@ -270,7 +272,53 @@ if (!$user) {
             animation: toastOut 0.25s ease forwards;
         }
 
+        /* ════════════════════════
+           TEMA OSCURO
+           Se activa agregando la clase .tema-oscuro al <html>
+        ════════════════════════ */
+        html.tema-oscuro body {
+            background: #15151a;
+            color: #eee;
+        }
+
+        html.tema-oscuro .container {
+            background: #1e1e24;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.4);
+        }
+
+        html.tema-oscuro h1 {
+            color: #f2f2f2;
+            border-bottom-color: rgba(232,121,160,0.25);
+        }
+
+        html.tema-oscuro .form-group label {
+            color: #ddd;
+        }
+
+        html.tema-oscuro .form-group input {
+            background: #2a2a31;
+            border-color: #3a3a42;
+            color: #f2f2f2;
+        }
+
+        html.tema-oscuro .form-group input:focus {
+            border-color: var(--pink-light);
+        }
+
+        html.tema-oscuro .form-group input.input-error {
+            background: #2e1f1f;
+            border-color: var(--red);
+        }
+
+        html.tema-oscuro .btn-secondary {
+            background: #2a2a31;
+            color: #eee;
+            border-color: #3a3a42;
+        }
+
     </style>
+
+    <?php include __DIR__ . '/../Tema/TemaHead.php'; ?>
 
 </head>
 
@@ -448,9 +496,7 @@ if (!$user) {
         });
     });
 
-    /* ══════════════════════════════════════
-       SUBMIT
-    ══════════════════════════════════════ */
+
     document.getElementById('editForm').addEventListener('submit', function(e) {
         e.preventDefault();
 
@@ -475,6 +521,8 @@ if (!$user) {
         setTimeout(() => this.submit(), 800); // pequeña pausa para que se vea el toast
     });
 </script>
+
+<?php include __DIR__ . '/../Views/ayuda_footer.php'; ?>
 
 </body>
 </html>

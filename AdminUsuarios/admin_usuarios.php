@@ -30,6 +30,7 @@
             background: var(--cream);
             color: var(--dark);
             min-height: 100vh;
+            transition: background 0.3s, color 0.3s;
         }
 
         .container {
@@ -39,6 +40,7 @@
             padding: 40px;
             border-radius: 32px;
             box-shadow: 0 8px 40px rgba(232,121,160,0.12);
+            transition: background 0.3s;
         }
 
         h1, h2 {
@@ -181,6 +183,17 @@
             padding-bottom: 0;
         }
 
+        .filtro-form {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .filtro-label {
+            font-weight: 500;
+            color: var(--dark);
+        }
+
         select {
             padding: 10px 14px;
             border: 1.5px solid #eee;
@@ -189,7 +202,7 @@
             font-size: 0.88rem;
             color: var(--dark);
             outline: none;
-            transition: border 0.2s;
+            transition: border 0.2s, background 0.3s, color 0.3s;
             background: #fff;
         }
 
@@ -293,7 +306,113 @@
             gap: 12px;
             justify-content: center;
         }
+
+        /* ════════════════════════
+           TEMA OSCURO
+           Se activa agregando la clase .tema-oscuro al <html>
+        ════════════════════════ */
+        html.tema-oscuro body {
+            background: #15151a;
+            color: #eee;
+        }
+
+        html.tema-oscuro .container {
+            background: #1e1e24;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.4);
+        }
+
+        html.tema-oscuro h1,
+        html.tema-oscuro h2 {
+            color: #f2f2f2;
+            border-bottom-color: rgba(232,121,160,0.25);
+        }
+
+        html.tema-oscuro .badge-rol {
+            background: rgba(232,121,160,0.15);
+            border-color: rgba(232,121,160,0.3);
+        }
+
+        html.tema-oscuro .filtro-label {
+            color: #eee;
+        }
+
+        html.tema-oscuro .table-container {
+            box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+        }
+
+        html.tema-oscuro .table {
+            background: #1e1e24;
+        }
+
+        html.tema-oscuro .table th {
+            background: rgba(232,121,160,0.12);
+        }
+
+        html.tema-oscuro .table td {
+            color: #eee;
+            border-bottom-color: #2a2a31;
+        }
+
+        html.tema-oscuro .table tr:hover {
+            background: #26262e;
+        }
+
+        html.tema-oscuro .empty-state {
+            background: rgba(232,121,160,0.12);
+        }
+
+        html.tema-oscuro select {
+            background: #2a2a31;
+            border-color: #3a3a42;
+            color: #f2f2f2;
+        }
+
+        html.tema-oscuro .btn-secondary {
+            background: #2a2a31;
+            color: #eee;
+            border-color: #3a3a42;
+        }
+
+        html.tema-oscuro .alert-success {
+            background: rgba(90,158,111,0.15);
+            color: #8fc9a0;
+            border-left-color: #5a9e6f;
+        }
+
+        html.tema-oscuro .alert-error {
+            background: rgba(224,85,85,0.15);
+            color: #f19d9d;
+            border-left-color: #e05555;
+        }
+
+        html.tema-oscuro .modal-overlay {
+            background: rgba(0,0,0,0.8);
+        }
+
+        html.tema-oscuro .modal-box {
+            background: #1e1e24;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+
+        html.tema-oscuro .modal-title {
+            color: #f2f2f2;
+        }
+
+        html.tema-oscuro .modal-msg {
+            color: #bbb;
+        }
+
+        html.tema-oscuro .modal-warn {
+            background: rgba(224,85,85,0.15);
+            color: #f19d9d;
+        }
+
+        html.tema-oscuro label {
+            color: #ddd;
+        }
     </style>
+    <?php include __DIR__ . '/../Tema/TemaHead.php'; ?>
+    <script>console.log('USER_ID:', USER_ID);</script>
 </head>
 
 <body>
@@ -334,9 +453,9 @@
     ?>
 
     <div style="margin-bottom: 20px;">
-        <form method="GET" action="admin_usuariosController.php" style="display: flex; gap: 10px; align-items: center;">
-            <label style="font-weight: 500; color: var(--dark);">Filtrar por estado:</label>
-            <select name="filtro" onchange="this.form.submit()" style="padding: 8px 12px; border-radius: 10px; border: 1px solid #dcd3cb; outline: none; background: #fff; font-family: inherit;">
+        <form method="GET" action="admin_usuariosController.php" class="filtro-form">
+            <label class="filtro-label">Filtrar por estado:</label>
+            <select name="filtro" onchange="this.form.submit()">
                 <option value="todos" <?= (isset($_GET['filtro']) && $_GET['filtro'] == 'todos') ? 'selected' : '' ?>>Todos</option>
                 <option value="activos" <?= (isset($_GET['filtro']) && $_GET['filtro'] == 'activos') ? 'selected' : '' ?>>Activos</option>
                 <option value="inactivos" <?= (isset($_GET['filtro']) && $_GET['filtro'] == 'inactivos') ? 'selected' : '' ?>>Inactivos</option>
@@ -529,6 +648,8 @@ document.getElementById("modal-overlay").addEventListener("click", function(e) {
 });
 
 </script>
+
+<?php include __DIR__ . '/../Views/ayuda_footer.php'; ?>
 
 </body>
 </html>

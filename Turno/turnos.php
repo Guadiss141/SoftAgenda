@@ -30,6 +30,11 @@ $terapeutas_arr = $terapeutas_db ?? [];
     --gray-mid: #ccc;
     --green: #5a9e6f;
     --green-pale: #eaf4ee;
+    --status-success-bg: #e9edc9;
+    --status-success-text: #4e5a37;
+    --status-warning-bg: #fff3cd;
+    --status-warning-text: #856404;
+    --agenda-bg: #fdfbf7;
   }
   * { margin:0; padding:0; box-sizing:border-box; }
   body {
@@ -37,6 +42,8 @@ $terapeutas_arr = $terapeutas_db ?? [];
     min-height: 100vh;
     font-family: 'DM Sans', sans-serif;
     padding: 20px;
+    color: var(--dark);
+    transition: background 0.3s, color 0.3s;
   }
 
   /* ── LAYOUT GENERAL ── */
@@ -84,6 +91,7 @@ $terapeutas_arr = $terapeutas_db ?? [];
     padding: 24px 22px;
     box-shadow: 0 4px 20px rgba(0,0,0,0.05);
     overflow-x: auto;
+    transition: background 0.3s;
   }
   .table-card-title {
     font-family: 'Playfair Display', serif;
@@ -136,6 +144,7 @@ $terapeutas_arr = $terapeutas_db ?? [];
     box-shadow: 0 8px 40px rgba(232,121,160,0.12);
     position: relative;
     overflow: hidden;
+    transition: background 0.3s;
   }
   .card::before {
     content:''; position:absolute; top:-60px; right:-60px;
@@ -198,7 +207,7 @@ $terapeutas_arr = $terapeutas_db ?? [];
 
   /* ── PANEL LATERAL ── */
   .side-panel { flex:1; min-width:260px; display:flex; flex-direction:column; gap:16px; }
-  .panel-card { background:#fff; border-radius:24px; padding:22px 20px; box-shadow:0 4px 20px rgba(0,0,0,0.05); }
+  .panel-card { background:#fff; border-radius:24px; padding:22px 20px; box-shadow:0 4px 20px rgba(0,0,0,0.05); transition: background 0.3s; }
   .panel-title {
     font-size:0.7rem; font-weight:500; letter-spacing:1.5px;
     text-transform:uppercase; color:var(--gray); margin-bottom:12px;
@@ -228,7 +237,7 @@ $terapeutas_arr = $terapeutas_db ?? [];
   }
   .empty-appt { text-align:center; font-size:0.8rem; color:#ccc; padding:10px 0; }
   .agenda-item {
-    background:#fdfbf7; border-radius:12px;
+    background: var(--agenda-bg); border-radius:12px;
     padding:14px 16px; border-left:4px solid var(--pink); margin-bottom:10px;
   }
   .agenda-item p { font-size:0.85rem; color:var(--dark); margin:4px 0; }
@@ -267,9 +276,9 @@ $terapeutas_arr = $terapeutas_db ?? [];
     padding:10px 14px; border-radius:10px;
     font-size:0.83rem; margin-bottom:12px; text-align:center;
   }
-  .status-success { background:#e9edc9; color:#4e5a37; }
+  .status-success { background: var(--status-success-bg); color: var(--status-success-text); }
   .status-error   { background:var(--red-pale); color:var(--red); }
-  .status-warning { background:#fff3cd; color:#856404; }
+  .status-warning { background: var(--status-warning-bg); color: var(--status-warning-text); }
   .afectados-box {
     background:#fff7f0; border-left:4px solid var(--red);
     border-radius:12px; padding:12px 14px;
@@ -301,7 +310,7 @@ $terapeutas_arr = $terapeutas_db ?? [];
     width:100%; padding:11px 14px; border:1.5px solid #eee;
     border-radius:12px; font-family:'DM Sans',sans-serif;
     font-size:0.88rem; color:var(--dark); margin-bottom:10px;
-    outline:none; transition:border 0.2s; resize:none;
+    outline:none; transition:border 0.2s, background 0.3s, color 0.3s; resize:none;
     appearance: none; -webkit-appearance: none;
     background-color: #fff;
   }
@@ -376,7 +385,7 @@ $terapeutas_arr = $terapeutas_db ?? [];
   }
   .toast.toast-success { background:var(--green-pale); color:var(--green); border-left:4px solid var(--green); box-shadow:0 6px 20px rgba(90,158,111,0.15); }
   .toast.toast-error   { background:var(--red-pale);   color:var(--red);   border-left:4px solid var(--red);   box-shadow:0 6px 20px rgba(224,85,85,0.15); }
-  .toast.toast-warning { background:#fff3cd; color:#856404; border-left:4px solid #f0ad00; box-shadow:0 6px 20px rgba(240,173,0,0.15); }
+  .toast.toast-warning { background: var(--status-warning-bg); color: var(--status-warning-text); border-left:4px solid #f0ad00; box-shadow:0 6px 20px rgba(240,173,0,0.15); }
   .toast-icon  { font-size:16px; flex-shrink:0; }
   .toast-msg   { flex:1; line-height:1.4; }
   .toast-close { background:none; border:none; cursor:pointer; color:inherit; opacity:0.4; font-size:16px; line-height:1; padding:0; transition:opacity 0.2s; }
@@ -395,7 +404,226 @@ $terapeutas_arr = $terapeutas_db ?? [];
     .admin-header .title-turnos,
     .admin-header .title-month { font-size: 1.6rem; }
   }
+
+  /* ════════════════════════
+     TEMA OSCURO
+     Se activa agregando la clase .tema-oscuro al <html>
+  ════════════════════════ */
+  html.tema-oscuro body {
+    background: #15151a;
+    color: #eee;
+  }
+
+  html.tema-oscuro .title-turnos,
+  html.tema-oscuro .admin-header .title-turnos {
+    color: #f2f2f2;
+  }
+
+  html.tema-oscuro .table-card,
+  html.tema-oscuro .card,
+  html.tema-oscuro .panel-card {
+    background: #1e1e24;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  }
+
+  html.tema-oscuro .card::before {
+    background: radial-gradient(circle, rgba(232,121,160,0.1) 0%, transparent 70%);
+  }
+
+  html.tema-oscuro .table-card-title {
+    color: #f2f2f2;
+  }
+
+  html.tema-oscuro .badge-pendiente {
+    background: rgba(232,121,160,0.15);
+  }
+
+  html.tema-oscuro .badge-cancelado {
+    background: rgba(224,85,85,0.15);
+  }
+
+  html.tema-oscuro .admin-table thead th {
+    border-bottom-color: #2a2a31;
+  }
+
+  html.tema-oscuro .admin-table tbody tr:hover {
+    background: #26262e;
+  }
+
+  html.tema-oscuro .admin-table tbody td {
+    color: #eee;
+    border-bottom-color: #2a2a31;
+  }
+
+  html.tema-oscuro .empty-table {
+    color: #666;
+  }
+
+  html.tema-oscuro .nav-btn:hover {
+    background: rgba(232,121,160,0.15);
+  }
+
+  html.tema-oscuro .nav-label {
+    color: #999;
+  }
+
+  html.tema-oscuro .weekday {
+    color: #999;
+  }
+
+  html.tema-oscuro .day {
+    color: #eee;
+  }
+
+  html.tema-oscuro .day:hover:not(.empty):not(.today):not(.blocked) {
+    background: rgba(232,121,160,0.15);
+  }
+
+  html.tema-oscuro .day.marked {
+    background: rgba(232,121,160,0.15);
+  }
+
+  html.tema-oscuro .day.blocked {
+    background: rgba(224,85,85,0.15);
+  }
+
+  html.tema-oscuro .day.weekend,
+  html.tema-oscuro .day.past {
+    color: #555;
+  }
+
+  html.tema-oscuro .panel-title {
+    color: #999;
+  }
+
+  html.tema-oscuro .appt-item {
+    background: rgba(232,121,160,0.12);
+  }
+
+  html.tema-oscuro .appt-item .appt-text {
+    color: #eee;
+  }
+
+  html.tema-oscuro .appt-item.ocupado {
+    background: #26262e;
+  }
+
+  html.tema-oscuro .appt-item.ocupado .appt-text {
+    color: #999;
+  }
+
+  html.tema-oscuro .empty-appt {
+    color: #555;
+  }
+
+  html.tema-oscuro .agenda-item {
+    background: #26262e;
+  }
+
+  html.tema-oscuro .agenda-item p {
+    color: #eee;
+  }
+
+  html.tema-oscuro .unblock-btn {
+    background: #2a2a31;
+    color: #ccc;
+  }
+
+  html.tema-oscuro .unblock-btn:hover {
+    background: #33333c;
+  }
+
+  html.tema-oscuro .back-btn {
+    background: #1e1e24;
+    color: #aaa;
+  }
+
+  html.tema-oscuro .back-btn:hover {
+    background: #26262e;
+  }
+
+  html.tema-oscuro .status-success {
+    background: rgba(163,177,138,0.15);
+    color: #b9c99e;
+  }
+
+  html.tema-oscuro .status-error {
+    background: rgba(224,85,85,0.15);
+    color: #f19d9d;
+  }
+
+  html.tema-oscuro .status-warning {
+    background: rgba(240,173,0,0.15);
+    color: #e0b843;
+  }
+
+  html.tema-oscuro .afectados-box {
+    background: rgba(224,85,85,0.1);
+    color: #eee;
+  }
+
+  html.tema-oscuro .modal-overlay {
+    background: rgba(0,0,0,0.6);
+  }
+
+  html.tema-oscuro .modal,
+  html.tema-oscuro .confirm-modal {
+    background: #1e1e24;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  }
+
+  html.tema-oscuro .modal h3,
+  html.tema-oscuro .confirm-modal h4 {
+    color: #f2f2f2;
+  }
+
+  html.tema-oscuro .modal-date,
+  html.tema-oscuro .confirm-modal p {
+    color: #999;
+  }
+
+  html.tema-oscuro .modal select,
+  html.tema-oscuro .modal input,
+  html.tema-oscuro .modal textarea {
+    background-color: #26262e;
+    border-color: #33333c;
+    color: #eee;
+  }
+
+  html.tema-oscuro .modal select.select-error,
+  html.tema-oscuro .modal input.input-error {
+    background: rgba(224,85,85,0.08);
+  }
+
+  html.tema-oscuro .btn-cancel {
+    border-color: #33333c;
+    color: #ccc;
+  }
+
+  html.tema-oscuro .btn-cancel:hover {
+    background: #26262e;
+  }
+
+  html.tema-oscuro .horas-loading {
+    color: #999;
+  }
+
+  html.tema-oscuro .toast.toast-warning {
+    background: rgba(240,173,0,0.15);
+    color: #e0b843;
+  }
+
+  html.tema-oscuro .toast.toast-success {
+    background: rgba(90,158,111,0.15);
+    color: #8fc9a0;
+  }
+
+  html.tema-oscuro .toast.toast-error {
+    background: rgba(224,85,85,0.15);
+    color: #f19d9d;
+  }
 </style>
+<?php include __DIR__ . '/../Tema/TemaHead.php'; ?>
 </head>
 <body>
 
@@ -1104,5 +1332,7 @@ $terapeutas_arr = $terapeutas_db ?? [];
 </script>
 
 <?php endif; ?>
+<?php include __DIR__ . '/../Views/ayuda_footer.php'; ?>
+
 </body>
 </html>

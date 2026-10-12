@@ -29,12 +29,29 @@ $mensaje = '';
 
 //se cancela turno de parte del paciente
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'cancelar_turno') {
-    $id_Turno   = intval($_POST['id_turno']  ?? 0);
-    $id_Paciente = $_SESSION['id_Paciente']  ?? null;
+    $id_Turno    = intval($_POST['id_turno']  ?? 0);
+    $id_Paciente = $_SESSION['id_Paciente']   ?? null;
 
     if ($id_Turno > 0 && $id_Paciente) {
+        // Guardamos el turno ANTES de cancelar, para el log
+        $turnoAnterior = $modelo->obtenerTurnoPorId($id_Turno, $id_Paciente);
+
         $ok      = $modelo->cancelarTurno($id_Turno, $id_Paciente);
         $mensaje = $ok ? 'success' : 'error';
+
+        // Registrar la acción cancelar en la tabla de auditoría
+        if ($ok) {
+            require_once __DIR__ . '/../Turno/Auditoria.php';
+            $auditoria = new Auditoria($conexion);
+            $auditoria->registrar(
+                $id_Turno,
+                $_SESSION['id_Usuario'],
+                'Turno',
+                'CANCELAR',
+                json_encode($turnoAnterior),
+                null
+            );
+        }
     } else {
         $mensaje = 'error';
     }

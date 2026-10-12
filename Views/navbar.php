@@ -7,7 +7,7 @@ $id_Rol = $_SESSION['id_Rol'] ?? null;
 
 $modulos_navbar = [];
 if (isset($_SESSION['id_Usuario']) && isset($id_Rol)) {
-    require_once __DIR__ . '/../Models/ModulosModel.php';
+    require_once __DIR__ . '/../Modulos/ModulosModel.php';
     $conexion_modulos = new mysqli("localhost", "root", "345756", "gestionspabd");
     if (!$conexion_modulos->connect_error) {
         $model_modulos = new ModulosModel($conexion_modulos);
@@ -21,7 +21,7 @@ if (isset($_SESSION['id_Usuario']) && isset($id_Rol)) {
 
 <nav class="navbar">
     <div class="nav-left">
-        <a href="/Spaa/Views/index.php" class="logo">
+        <a href="/Spaa/Inicioo/index.php" class="logo">
             Soft<span>Agenda</span>
         </a>
     </div>
@@ -45,13 +45,13 @@ if (isset($_SESSION['id_Usuario']) && isset($id_Rol)) {
                         </a>
                     <?php endforeach; ?>
                     <hr>
-                    <a href="/Spaa/Views/Logout.php" class="logout-link">Cerrar sesión</a>
+                    <a href="/Spaa/Login/Logout.php" class="logout-link">Cerrar sesión</a>
                 </div>
             </div>
 
         <?php else: ?>
-            <a href="/Spaa/Views/login.php" class="btn btn-outline">Iniciar sesión</a>
-            <a href="/Spaa/Views/registro.php" class="btn btn-pink">Registrarse</a>
+            <a href="/Spaa/Login/login.php" class="btn btn-outline">Iniciar sesión</a>
+            <a href="/Spaa/Registro/Registro.php" class="btn btn-pink">Registrarse</a>
         <?php endif; ?>
     </div>
 </nav>

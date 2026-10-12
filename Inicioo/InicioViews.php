@@ -40,6 +40,7 @@ if ($usuario && isset($id_Rol)) {
             min-height: 100vh;
             background: url('../Views/img/relax.png') no-repeat center center fixed;
             background-size: cover;
+            transition: background 0.3s;
         }
 
         /* ── OVERLAY oscuro sobre la imagen ── */
@@ -49,6 +50,7 @@ if ($usuario && isset($id_Rol)) {
             inset: 0;
             background: rgba(0,0,0,0.38);
             z-index: 0;
+            transition: background 0.3s;
         }
 
         /* ════════════════════════
@@ -204,6 +206,62 @@ if ($usuario && isset($id_Rol)) {
 
         .dropdown-content.show { display: block; }
 
+        /* ── Item del switch de tema dentro del dropdown ── */
+        .dropdown-item-tema {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            padding: 11px 18px;
+            color: #1a1a1a;
+            font-size: 0.88rem;
+            border-top: 1.5px solid #fde8f0;
+            border-bottom: 1.5px solid #fde8f0;
+        }
+
+        .switch-tema {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 22px;
+            flex-shrink: 0;
+        }
+
+        .switch-tema input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider-tema {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #ccc;
+            transition: .3s;
+            border-radius: 22px;
+        }
+
+        .slider-tema::before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 3px;
+            bottom: 3px;
+            background-color: #fff;
+            transition: .3s;
+            border-radius: 50%;
+        }
+
+        .switch-tema input:checked + .slider-tema {
+            background-color: #e879a0;
+        }
+
+        .switch-tema input:checked + .slider-tema::before {
+            transform: translateX(18px);
+        }
+
         /* ════════════════════════
            HERO
         ════════════════════════ */
@@ -263,6 +321,45 @@ if ($usuario && isset($id_Rol)) {
             border-color: #fff;
             box-shadow: none;
             transform: translateY(-2px);
+        }
+
+        /* ════════════════════════
+           TEMA OSCURO
+           Se activa agregando la clase .tema-oscuro al <html>
+        ════════════════════════ */
+        html.tema-oscuro body::before {
+            background: rgba(0,0,0,0.65);
+        }
+
+        html.tema-oscuro .header {
+            background: rgba(15,15,18,0.55);
+        }
+
+        html.tema-oscuro .dropdown-content {
+            background: rgba(28,26,30,0.97);
+            border-color: rgba(232,121,160,0.25);
+        }
+
+        html.tema-oscuro .dropdown-content a {
+            color: #f2f2f2;
+        }
+
+        html.tema-oscuro .dropdown-content a:hover {
+            background: rgba(232,121,160,0.18);
+            color: #f5b8d0;
+        }
+
+        html.tema-oscuro .dropdown-item-tema {
+            color: #f2f2f2;
+            border-color: rgba(232,121,160,0.25);
+        }
+
+        html.tema-oscuro .dropdown-content a.logout {
+            color: #f5b8d0;
+        }
+
+        html.tema-oscuro .dropdown-content a.logout:hover {
+            background: rgba(192,57,43,0.25);
         }
 
         /* ════════════════════════
@@ -340,6 +437,10 @@ if ($usuario && isset($id_Rol)) {
                 border-top-color: rgba(232,121,160,0.25);
             }
 
+            .dropdown-item-tema {
+                color: #fff;
+            }
+
             .home {
                 padding: 80px 24px 40px;
                 justify-content: center;
@@ -366,6 +467,8 @@ if ($usuario && isset($id_Rol)) {
             .content h2 { font-size: 1.8rem; }
         }
     </style>
+
+    <?php include __DIR__ . '/../Tema/TemaHead.php'; ?>
 </head>
 <body>
 
@@ -397,6 +500,15 @@ if ($usuario && isset($id_Rol)) {
                             <?= htmlspecialchars($modulo['Nombre']) ?>
                         </a>
                     <?php endforeach; ?>
+
+                    <div class="dropdown-item-tema">
+                        <span><i class='bx bx-moon'></i> Tema oscuro</span>
+                        <label class="switch-tema">
+                            <input type="checkbox" id="switchTema">
+                            <span class="slider-tema"></span>
+                        </label>
+                    </div>
+
                     <a href="/Spaa/Login/Logout.php" class="logout">
                         <i class='bx bx-log-out'></i> Cerrar sesión
                     </a>
@@ -424,6 +536,14 @@ document.addEventListener("DOMContentLoaded", function () {
     const nav        = document.getElementById('mainNav');
     const dropBtn    = document.getElementById('dropdownBtn');
     const dropMenu   = document.getElementById('dropdownMenu');
+
+    // ── Tema claro/oscuro ── (el tema ya se aplicó en el <head>; acá solo
+    // sincronizamos el switch y dejamos el listener de cambio)
+    try {
+        TemaCache.inicializar('switchTema');
+    } catch (err) {
+        console.error('No se pudo inicializar TemaCache:', err);
+    }
 
     // ── Hamburguesa ──
     if (hamburger) {
@@ -460,6 +580,8 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 </script>
+
+<?php include __DIR__ . '/../Views/ayuda_footer.php'; ?>
 
 </body>
 </html>

@@ -24,6 +24,8 @@ function fechaEs($fecha) {
     --cream: #f7c6d0;
     --dark: #1a1a1a;
     --gray: #888;
+    --green: #5a9e6f;
+    --green-pale: #e9edc9;
   }
 
   * { margin:0; padding:0; box-sizing:border-box; }
@@ -33,6 +35,8 @@ function fechaEs($fecha) {
     min-height: 100vh;
     font-family: 'DM Sans', sans-serif;
     padding: 40px 20px;
+    color: var(--dark);
+    transition: background 0.3s, color 0.3s;
   }
 
   .page-wrapper {
@@ -81,7 +85,7 @@ function fechaEs($fecha) {
     margin-bottom: 20px;
     text-align: center;
   }
-  .status-success { background: #e9edc9; color: #4e5a37; }
+  .status-success { background: var(--green-pale); color: #4e5a37; }
   .status-error   { background: var(--red-pale); color: var(--red); }
 
   /* Tarjeta de cita/turno */
@@ -92,7 +96,7 @@ function fechaEs($fecha) {
     margin-bottom: 16px;
     box-shadow: 0 4px 20px rgba(0,0,0,0.05);
     border-left: 5px solid var(--pink);
-    transition: transform 0.2s ease;
+    transition: transform 0.2s ease, background 0.3s;
     animation: fadeUp 0.3s ease forwards;
     opacity: 0;
   }
@@ -198,6 +202,7 @@ function fechaEs($fecha) {
     background: #fff;
     border-radius: 20px;
     box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+    transition: background 0.3s;
   }
 
   .empty-state .icono { font-size: 2.5rem; margin-bottom: 12px; }
@@ -258,7 +263,110 @@ function fechaEs($fecha) {
   .btn-confirmar:hover { background: #c04444; }
   .btn-volver { background: #f5f5f5; color: var(--gray); }
   .btn-volver:hover { background: #eee; }
+
+  /* ════════════════════════
+     TEMA OSCURO
+     Se activa agregando la clase .tema-oscuro al <html>
+  ════════════════════════ */
+  html.tema-oscuro body {
+    background: #15151a;
+    color: #eee;
+  }
+
+  html.tema-oscuro .title {
+    color: #f2f2f2;
+  }
+
+  html.tema-oscuro .subtitle {
+    color: #999;
+  }
+
+  html.tema-oscuro .status-success {
+    background: rgba(90,158,111,0.15);
+    color: #8fc9a0;
+  }
+
+  html.tema-oscuro .status-error {
+    background: rgba(224,85,85,0.15);
+    color: #f19d9d;
+  }
+
+  html.tema-oscuro .cita-card {
+    background: #1e1e24;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  }
+
+  html.tema-oscuro .cita-fecha {
+    color: #f2f2f2;
+  }
+
+  html.tema-oscuro .cita-hora {
+    background: rgba(232,121,160,0.15);
+  }
+
+  html.tema-oscuro .cita-row {
+    color: #eee;
+  }
+
+  html.tema-oscuro .cita-label {
+    color: #999;
+  }
+
+  html.tema-oscuro .cita-descripcion {
+    background: #26262e;
+    color: #aaa;
+  }
+
+  html.tema-oscuro .btn-cancelar {
+    background: rgba(224,85,85,0.15);
+  }
+
+  html.tema-oscuro .empty-state {
+    background: #1e1e24;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  }
+
+  html.tema-oscuro .empty-state p {
+    color: #999;
+  }
+
+  html.tema-oscuro .back-btn {
+    background: #1e1e24;
+    color: #aaa;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+  }
+
+  html.tema-oscuro .back-btn:hover {
+    background: #26262e;
+  }
+
+  html.tema-oscuro .modal-overlay {
+    background: rgba(0,0,0,0.6);
+  }
+
+  html.tema-oscuro .modal {
+    background: #1e1e24;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  }
+
+  html.tema-oscuro .modal h3 {
+    color: #f2f2f2;
+  }
+
+  html.tema-oscuro .modal p {
+    color: #aaa;
+  }
+
+  html.tema-oscuro .btn-volver {
+    background: #2a2a31;
+    color: #ccc;
+  }
+
+  html.tema-oscuro .btn-volver:hover {
+    background: #33333c;
+  }
 </style>
+<?php include __DIR__ . '/../Tema/TemaHead.php'; ?>
 </head>
 <body>
 
@@ -408,5 +516,7 @@ function fechaEs($fecha) {
     if (e.key === 'Escape') cerrarModal();
   });
 </script>
+<?php include __DIR__ . '/../Views/ayuda_footer.php'; ?>
+
 </body>
 </html>

@@ -251,9 +251,9 @@ a:hover {
         <!-- Indicadores en tiempo real -->
         <div class="pass-hint" id="pass-hint">
             <span id="hint-len">De 8 a 20 caracteres</span>
-            <span id="hint-alpha">Solo letras y números (sin espacios)</span>
-            <span id="hint-letra">Al menos 1 letra</span>
+            <span id="hint-mayus">Al menos 1 mayúscula</span>
             <span id="hint-num">Al menos 1 número</span>
+            <span id="hint-especial">Al menos 1 carácter especial (!@#$%...)</span>
         </div>
 
         <div class="input-group">
@@ -296,17 +296,19 @@ document.getElementById('modal-val').addEventListener('click', function(e) {
 
 // Indicadores en tiempo real
 const inpPass = document.getElementById('inp-pass');
-const hintLen   = document.getElementById('hint-len');
-const hintAlpha = document.getElementById('hint-alpha');
-const hintLetra = document.getElementById('hint-letra');
-const hintNum   = document.getElementById('hint-num');
+const hintLen      = document.getElementById('hint-len');
+const hintMayus    = document.getElementById('hint-mayus');
+const hintNum      = document.getElementById('hint-num');
+const hintEspecial = document.getElementById('hint-especial');
+
+const regexEspecial = /[!@#$%^&*(),.?":{}|<>_\-]/;
 
 inpPass.addEventListener('input', function() {
     const val = this.value;
-    hintLen.classList.toggle('ok',   val.length >= 8 && val.length <= 20);
-    hintAlpha.classList.toggle('ok', val.length > 0 && /^[a-zA-Z0-9]+$/.test(val));
-    hintLetra.classList.toggle('ok', /[a-zA-Z]/.test(val));
-    hintNum.classList.toggle('ok',   /[0-9]/.test(val));
+    hintLen.classList.toggle('ok',      val.length >= 8 && val.length <= 20);
+    hintMayus.classList.toggle('ok',    /[A-Z]/.test(val));
+    hintNum.classList.toggle('ok',      /[0-9]/.test(val));
+    hintEspecial.classList.toggle('ok', regexEspecial.test(val));
 });
 
 // Validación al enviar
@@ -342,17 +344,10 @@ document.getElementById('form-registro').addEventListener('submit', function(e) 
         return;
     }
 
-    if (!/^[a-zA-Z0-9]+$/.test(pass)) {
+    if (!/[A-Z]/.test(pass)) {
         e.preventDefault();
         document.getElementById('inp-pass').classList.add('input-error');
-        mostrarModal('Caracteres no permitidos', 'La contraseña solo puede contener letras y números, sin espacios ni símbolos especiales.');
-        return;
-    }
-
-    if (!/[a-zA-Z]/.test(pass)) {
-        e.preventDefault();
-        document.getElementById('inp-pass').classList.add('input-error');
-        mostrarModal('Contraseña inválida', 'La contraseña debe contener al menos una letra.');
+        mostrarModal('Contraseña inválida', 'La contraseña debe contener al menos una mayúscula.');
         return;
     }
 
@@ -360,6 +355,20 @@ document.getElementById('form-registro').addEventListener('submit', function(e) 
         e.preventDefault();
         document.getElementById('inp-pass').classList.add('input-error');
         mostrarModal('Contraseña inválida', 'La contraseña debe contener al menos un número (0-9).');
+        return;
+    }
+
+    if (!regexEspecial.test(pass)) {
+        e.preventDefault();
+        document.getElementById('inp-pass').classList.add('input-error');
+        mostrarModal('Contraseña inválida', 'La contraseña debe contener al menos un carácter especial (!@#$%^&* etc).');
+        return;
+    }
+
+    if (!/^[a-zA-Z0-9!@#$%^&*(),.?":{}|<>_\-]+$/.test(pass)) {
+        e.preventDefault();
+        document.getElementById('inp-pass').classList.add('input-error');
+        mostrarModal('Caracteres no permitidos', 'La contraseña contiene caracteres no permitidos.');
         return;
     }
 

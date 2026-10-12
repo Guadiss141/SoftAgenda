@@ -26,23 +26,26 @@ class Turno {
         return $this->conn->query($query);
     }
 
-    public function crearTurno($id_Paciente, $id_Servicio, $id_Empleado, $fecha, $hora) {
-        $sql = "INSERT INTO turno
-                    (id_Paciente, id_Empleado, id_Servicio, Fecha_Turno, Hora_Turno, Estado_Turno)
-                VALUES
-                    (?, ?, ?, ?, ?, 'Pendiente')";
+public function crearTurno($id_Paciente, $id_Servicio, $id_Empleado, $fecha, $hora) {
+    $sql = "INSERT INTO turno
+                (id_Paciente, id_Empleado, id_Servicio, Fecha_Turno, Hora_Turno, Estado_Turno)
+            VALUES
+                (?, ?, ?, ?, ?, 'Pendiente')";
 
-        $stmt = $this->conn->prepare($sql);
-        if (!$stmt) return false;
+    $stmt = $this->conn->prepare($sql);
+    if (!$stmt) return false;
 
-        $id_Paciente = intval($id_Paciente);
-        $id_Empleado = intval($id_Empleado);
-        $id_Servicio = intval($id_Servicio);
+    $id_Paciente = intval($id_Paciente);
+    $id_Empleado = intval($id_Empleado);
+    $id_Servicio = intval($id_Servicio);
 
-        $stmt->bind_param("iiiss", $id_Paciente, $id_Empleado, $id_Servicio, $fecha, $hora);
-        return $stmt->execute();
+    $stmt->bind_param("iiiss", $id_Paciente, $id_Empleado, $id_Servicio, $fecha, $hora);
+    
+    if ($stmt->execute()) {
+        return $this->conn->insert_id; // antes: return true;
     }
-
+    return false;
+}
     public function crear($datos) {
         return $this->crearTurno(
             $datos['id_Paciente'],
@@ -208,7 +211,7 @@ class Turno {
     }
 
     public function eliminarTurno($id_turno) {
-        $sql  = "DELETE FROM turno WHERE id_Turno = ?";
+        $sql  = "UPDATE turno SET Estado_Turno = 'Cancelado' WHERE id_Turno = ?";
         $stmt = $this->conn->prepare($sql);
         $stmt->bind_param("i", $id_turno);
         return $stmt->execute();
@@ -405,41 +408,41 @@ class Turno {
     }
 
     public function bloquearDia($id_Empleado, $fecha, $motivo) {
-        $this->conn->begin_transaction();
-        try {
-            $sql = "INSERT INTO dias_bloqueados (id_Empleado, Fecha_Bloqueada, Motivo)
-                    VALUES (?, ?, ?)";
-            $stmt = $this->conn->prepare($sql);
-            $stmt->bind_param("iss", $id_Empleado, $fecha, $motivo);
-            $stmt->execute();
+    $this->conn->begin_transaction();
+    try {
+        $sql = "INSERT INTO dias_bloqueados (id_Empleado, Fecha_Bloqueada, Motivo)
+                VALUES (?, ?, ?)";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("iss", $id_Empleado, $fecha, $motivo);
+        $stmt->execute();
 
-            $sql_pac = "SELECT DISTINCT u.id_Usuario, p.Persona_Nombre, p.Persona_Apellido
-                        FROM turno t
-                        JOIN paciente pac ON t.id_Paciente = pac.id_Paciente
-                        JOIN usuario u    ON pac.id_Usuario = u.id_Usuario
-                        JOIN persona p    ON pac.id_Persona = p.id_Persona
-                        WHERE t.id_Empleado = ? AND t.Fecha_Turno = ?
-                        AND t.Estado_Turno != 'Cancelado'";
-            $stmt_pac = $this->conn->prepare($sql_pac);
-            $stmt_pac->bind_param("is", $id_Empleado, $fecha);
-            $stmt_pac->execute();
-            $pacientes_afectados = $stmt_pac->get_result()->fetch_all(MYSQLI_ASSOC);
+        // Ahora traemos el turno completo (incluye id_Turno) para poder auditar cada cancelación
+        $sql_turnos = "SELECT t.*, p.Persona_Nombre, p.Persona_Apellido
+                    FROM turno t
+                    JOIN paciente pac ON t.id_Paciente = pac.id_Paciente
+                    JOIN persona p    ON pac.id_Persona = p.id_Persona
+                    WHERE t.id_Empleado = ? AND t.Fecha_Turno = ?
+                    AND t.Estado_Turno != 'Cancelado'";
+        $stmt_turnos = $this->conn->prepare($sql_turnos);
+        $stmt_turnos->bind_param("is", $id_Empleado, $fecha);
+        $stmt_turnos->execute();
+        $turnos_afectados = $stmt_turnos->get_result()->fetch_all(MYSQLI_ASSOC);
 
-            $sql_cancel = "UPDATE turno SET Estado_Turno = 'Cancelado'
-                           WHERE id_Empleado = ? AND Fecha_Turno = ?
-                           AND Estado_Turno != 'Cancelado'";
-            $stmt_cancel = $this->conn->prepare($sql_cancel);
-            $stmt_cancel->bind_param("is", $id_Empleado, $fecha);
-            $stmt_cancel->execute();
+        $sql_cancel = "UPDATE turno SET Estado_Turno = 'Cancelado'
+                       WHERE id_Empleado = ? AND Fecha_Turno = ?
+                       AND Estado_Turno != 'Cancelado'";
+        $stmt_cancel = $this->conn->prepare($sql_cancel);
+        $stmt_cancel->bind_param("is", $id_Empleado, $fecha);
+        $stmt_cancel->execute();
 
-            $this->conn->commit();
-            return $pacientes_afectados;
+        $this->conn->commit();
+        return $turnos_afectados;
 
-        } catch (Exception $e) {
-            $this->conn->rollback();
-            return false;
-        }
+    } catch (Exception $e) {
+        $this->conn->rollback();
+        return false;
     }
+}
 
     public function desbloquearDia($id_Empleado, $fecha) {
         $sql = "DELETE FROM dias_bloqueados
@@ -491,6 +494,14 @@ class Turno {
         $stmt->bind_param("iii", $id_Empleado, $anio, $mes);
         $stmt->execute();
         return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public function obtenerTurnoPorIdSimple($id_turno) {
+    $sql = "SELECT * FROM turno WHERE id_Turno = ? LIMIT 1";
+    $stmt = $this->conn->prepare($sql);
+    $stmt->bind_param("i", $id_turno);
+    $stmt->execute();
+    return $stmt->get_result()->fetch_assoc();
     }
 }
 ?>

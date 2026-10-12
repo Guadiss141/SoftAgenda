@@ -27,6 +27,7 @@
             background: var(--cream);
             color: var(--dark);
             min-height: 100vh;
+            transition: background 0.3s, color 0.3s;
         }
 
         .container {
@@ -36,6 +37,7 @@
             padding: 40px;
             border-radius: 32px;
             box-shadow: 0 8px 40px rgba(232,121,160,0.12);
+            transition: background 0.3s;
         }
 
         .header-flex {
@@ -72,6 +74,7 @@
             box-shadow: 0 4px 20px rgba(0,0,0,0.05);
             margin-bottom: 30px;
             background: white;
+            transition: background 0.3s;
         }
 
         .table {
@@ -156,7 +159,77 @@
 
         .alert-success { background: var(--green-pale); color: var(--green); border-left: 4px solid var(--green); }
         .alert-danger  { background: var(--red-pale); color: var(--red); border-left: 4px solid var(--red); }
+
+        /* ════════════════════════
+           TEMA OSCURO
+           Se activa agregando la clase .tema-oscuro al <html>
+        ════════════════════════ */
+        html.tema-oscuro body {
+            background: #15151a;
+            color: #eee;
+        }
+
+        html.tema-oscuro .container {
+            background: #1e1e24;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.4);
+        }
+
+        html.tema-oscuro .header-flex {
+            border-bottom-color: rgba(232,121,160,0.25);
+        }
+
+        html.tema-oscuro .header-flex h1 {
+            color: #f2f2f2;
+        }
+
+        html.tema-oscuro .badge-rol {
+            background: rgba(232,121,160,0.15);
+            border-color: rgba(232,121,160,0.3);
+        }
+
+        html.tema-oscuro .table-container {
+            background: #1e1e24;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+        }
+
+        html.tema-oscuro .table th {
+            background: rgba(232,121,160,0.12);
+        }
+
+        html.tema-oscuro .table td {
+            color: #eee;
+            border-bottom-color: #2a2a31;
+        }
+
+        html.tema-oscuro .table tr:hover {
+            background: #26262e;
+        }
+
+        html.tema-oscuro .module-name {
+            color: #f2f2f2;
+        }
+
+        html.tema-oscuro .module-desc {
+            color: #999;
+        }
+
+        html.tema-oscuro .btn-secondary {
+            background: #2a2a31;
+            color: #eee;
+            border-color: #3a3a42;
+        }
+
+        html.tema-oscuro .alert-success {
+            background: rgba(90,158,111,0.15);
+            color: #8fc9a0;
+        }
+
+        html.tema-oscuro .alert-danger {
+            background: rgba(224,85,85,0.15);
+            color: #f19d9d;
+        }
     </style>
+    <?php include __DIR__ . '/../Tema/TemaHead.php'; ?>
 </head>
 <body>
 
@@ -212,6 +285,8 @@
         </div>
     </form>
 </div>
+
+<?php include __DIR__ . '/../Views/ayuda_footer.php'; ?>
 
 </body>
 </html>

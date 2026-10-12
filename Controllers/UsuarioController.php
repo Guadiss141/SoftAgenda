@@ -70,10 +70,10 @@ class UsuarioController {
                     }
                 }
 
-                header("Location: ../Views/Index.php");
+                header("Location: ../Inicioo/Index.php");
                 exit;
             } else {
-                header("Location: ../Views/Login.php?error=Usuario o clave incorrecta");
+                header("Location: ../Login/LoginControlls.php?error=Usuario o clave incorrecta");
                 exit;
             }
         }

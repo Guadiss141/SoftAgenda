@@ -119,8 +119,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         if (in_array($horaSolo, $ocupadas)) {
             $mensaje = 'hora_ocupada';
         } else {
-            $actualizado = $modelo->actualizarTurno($fecha, $hora, $servicio, $empleado, $id_turno, $id_Paciente);
-            $mensaje     = $actualizado ? 'success' : 'error';
+            // Guardamos el dato ANTES de actualizar (para el log)
+$datoAnterior = json_encode($turno); 
+
+$actualizado = $modelo->actualizarTurno($fecha, $hora, $servicio, $empleado, $id_turno, $id_Paciente);
+$mensaje     = $actualizado ? 'success' : 'error';
+
+if ($actualizado) {
+    // Recargar turno actualizado
+    $turno = $modelo->obtenerTurnoPorId($id_turno, $id_Paciente);
+    $datoNuevo = json_encode($turno);
+
+    // Registrar en auditoría la acción de modificar turno
+    require_once __DIR__ . '/Auditoria.php';
+    $auditoria = new Auditoria($conexion);
+    $auditoria->registrar(
+        $id_turno,
+        $_SESSION['id_Usuario'],
+        'Turno',
+        'MODIFICAR',
+        $datoAnterior,
+        $datoNuevo
+    );
+}
 
             // Recargar turno actualizado
             if ($actualizado) {

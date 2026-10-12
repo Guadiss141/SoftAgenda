@@ -19,12 +19,16 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $mensaje = "Completar todos los campos";
     } elseif (strlen($contraseña) < 8 || strlen($contraseña) > 20) {
         $mensaje = "La contraseña debe tener entre 8 y 20 caracteres.";
-    } elseif (!preg_match('/^[a-zA-Z0-9]+$/', $contraseña)) {
-        $mensaje = "La contraseña solo puede contener letras y números (sin espacios ni símbolos).";
-    } elseif (!preg_match('/[a-zA-Z]/', $contraseña)) {
-        $mensaje = "La contraseña debe contener al menos una letra.";
+    } elseif (!preg_match('/[A-Z]/', $contraseña)) {
+        $mensaje = "La contraseña debe contener al menos una mayúscula.";
     } elseif (!preg_match('/[0-9]/', $contraseña)) {
         $mensaje = "La contraseña debe contener al menos un número.";
+    } elseif (!preg_match('/[!@#$%^&*(),.?":{}|<>_\-]/', $contraseña)) {
+        $mensaje = "La contraseña debe contener al menos un carácter especial.";
+    } elseif (!preg_match('/^[a-zA-Z0-9!@#$%^&*(),.?":{}|<>_\-]+$/', $contraseña)) {
+        $mensaje = "La contraseña contiene caracteres no permitidos.";
+    } elseif ($contraseña !== $confirmar) {
+        $mensaje = "Las contraseñas no coinciden.";
     } else {
 
         $conexion = new mysqli("localhost", "root", "345756", "gestionspabd");

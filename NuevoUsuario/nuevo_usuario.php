@@ -26,6 +26,7 @@
             background: var(--cream);
             color: var(--dark);
             min-height: 100vh;
+            transition: background 0.3s, color 0.3s;
         }
 
         .container {
@@ -35,6 +36,7 @@
             padding: 40px;
             border-radius: 32px;
             box-shadow: 0 8px 40px rgba(232,121,160,0.12);
+            transition: background 0.3s;
         }
 
         h1 { 
@@ -188,7 +190,78 @@
             line-height: 1.5;
             margin-bottom: 24px;
         }
+
+        /* ════════════════════════
+           TEMA OSCURO
+           Se activa agregando la clase .tema-oscuro al <html>
+        ════════════════════════ */
+        html.tema-oscuro body {
+            background: #15151a;
+            color: #eee;
+        }
+
+        html.tema-oscuro .container {
+            background: #1e1e24;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.4);
+        }
+
+        html.tema-oscuro h1 {
+            color: #f2f2f2;
+            border-bottom-color: rgba(232,121,160,0.25);
+        }
+
+        html.tema-oscuro .form-group label {
+            color: #ddd;
+        }
+
+        html.tema-oscuro .form-group input,
+        html.tema-oscuro .form-group select {
+            background: #26262e;
+            border-color: #33333c;
+            color: #eee;
+        }
+
+        html.tema-oscuro .char-counter {
+            color: #999;
+        }
+
+        html.tema-oscuro .char-counter .bar-track {
+            background: #33333c;
+        }
+
+        html.tema-oscuro .char-counter.ok {
+            color: #8fc9a0;
+        }
+
+        html.tema-oscuro .btn-secondary {
+            background: #2a2a31;
+            color: #eee;
+            border-color: #3a3a42;
+        }
+
+        html.tema-oscuro .alert-danger {
+            background: rgba(224,85,85,0.15);
+            color: #f19d9d;
+        }
+
+        html.tema-oscuro .modal-overlay {
+            background: rgba(0,0,0,0.75);
+        }
+
+        html.tema-oscuro .modal-box {
+            background: #1e1e24;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+
+        html.tema-oscuro .modal-title {
+            color: #f2f2f2;
+        }
+
+        html.tema-oscuro .modal-msg {
+            color: #999;
+        }
     </style>
+    <?php include __DIR__ . '/../Tema/TemaHead.php'; ?>
 </head>
 <body>
 <div class="container">
@@ -248,14 +321,14 @@
         <div class="form-row">
             <div class="form-group">
                 <label>Tipo de Usuario:</label>
-                <select name="tipo_usuario" id="tipo_usuario" style="width: 100%; padding: 12px 15px; border-radius: 10px; border: 1px solid #dcd3cb; background: #fff; transition: 0.3s; box-sizing: border-box;">
+                <select name="tipo_usuario" id="tipo_usuario">
                     <option value="cliente">Cliente</option>
                     <option value="empleado">Empleado</option>
                 </select>
             </div>
             <div class="form-group" id="rol_group" style="display: none;">
                 <label>Rol:</label>
-                <select name="especialidad" id="especialidad" style="width: 100%; padding: 12px 15px; border-radius: 10px; border: 1px solid #dcd3cb; background: #fff; transition: 0.3s; box-sizing: border-box;">
+                <select name="especialidad" id="especialidad">
                     <option value="">Seleccione un rol...</option>
                     <?php foreach ($roles_empleado as $rol): ?>
                         <option value="<?php echo htmlspecialchars($rol['nombre']); ?>"><?php echo htmlspecialchars($rol['nombre']); ?></option>
@@ -417,5 +490,7 @@ document.getElementById('registroForm').addEventListener('submit', function(e) {
     this.submit();
 });
 </script>
+<?php include __DIR__ . '/../Views/ayuda_footer.php'; ?>
+
 </body>
 </html>

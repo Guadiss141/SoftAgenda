@@ -8,6 +8,14 @@ class CitasModel {
         $this->conexion = $conexion;
     }
 
+    public function obtenerTurnoPorId(int $id_Turno, int $id_Paciente) {
+        $sql = "SELECT * FROM turno WHERE id_Turno = ? AND id_Paciente = ? LIMIT 1";
+        $stmt = $this->conexion->prepare($sql);
+        $stmt->bind_param("ii", $id_Turno, $id_Paciente);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_assoc();
+    }
+
     public function getCitasPorEmpleado(int $id_Empleado): array {
         $sql = "SELECT t.id_Turno, t.Fecha_Turno,
                        DATE_FORMAT(t.Hora_Turno, '%H:%i') AS Hora_Turno,

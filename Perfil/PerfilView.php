@@ -23,6 +23,8 @@ $extra        = $extra        ?? [];
     --cream: #f7c6d0;
     --dark: #1a1a1a;
     --gray: #888;
+    --green-pale: #e9edc9;
+    --green-text: #4e5a37;
   }
   * { margin:0; padding:0; box-sizing:border-box; }
   body {
@@ -30,6 +32,7 @@ $extra        = $extra        ?? [];
     font-family: 'DM Sans', sans-serif;
     color: var(--dark);
     padding: 40px 20px;
+    transition: background 0.3s, color 0.3s;
   }
   .container { max-width: 700px; margin: 0 auto; }
 
@@ -60,6 +63,7 @@ $extra        = $extra        ?? [];
     background: #fff; border-radius: 24px;
     padding: 24px 26px; margin-bottom: 16px;
     box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    transition: background 0.3s;
   }
   .card-title {
     font-family: 'Playfair Display', serif;
@@ -80,7 +84,7 @@ $extra        = $extra        ?? [];
   .info-value.empty { color: #ccc; font-style: italic; }
 
   .alert { padding: 12px 16px; border-radius: 12px; margin-bottom: 16px; font-size: 0.85rem; }
-  .alert-success { background: #e9edc9; color: #4e5a37; border-left: 4px solid #a3b18a; }
+  .alert-success { background: var(--green-pale); color: var(--green-text); border-left: 4px solid #a3b18a; }
   .alert-danger  { background: var(--red-pale); color: var(--red); border-left: 4px solid var(--red); }
 
   .edit-card {
@@ -88,6 +92,7 @@ $extra        = $extra        ?? [];
     padding: 24px 26px; margin-bottom: 16px;
     box-shadow: 0 4px 20px rgba(0,0,0,0.05);
     border-left: 4px solid var(--pink);
+    transition: background 0.3s;
   }
   .edit-card.active { display: block; }
   .form-row { display: flex; gap: 14px; }
@@ -101,7 +106,7 @@ $extra        = $extra        ?? [];
     width: 100%; padding: 11px 14px;
     border: 1.5px solid #eee; border-radius: 12px;
     font-family: 'DM Sans', sans-serif; font-size: 0.88rem;
-    color: var(--dark); outline: none; transition: border 0.2s;
+    color: var(--dark); outline: none; transition: border 0.2s, background 0.3s, color 0.3s;
     box-sizing: border-box; background: #fff;
   }
   .form-group input:focus, .form-group textarea:focus { border-color: var(--pink-light); }
@@ -148,6 +153,7 @@ $extra        = $extra        ?? [];
     background: var(--red-pale); border-radius: 24px;
     padding: 22px 26px; margin-bottom: 16px;
     border-left: 4px solid var(--red);
+    transition: background 0.3s;
   }
   .danger-card .card-title { color: var(--red); border-bottom-color: #f5c6c2; }
   .danger-card p { font-size: 0.85rem; color: var(--gray); margin-bottom: 14px; }
@@ -190,7 +196,125 @@ $extra        = $extra        ?? [];
   .btn-confirmar-red:hover { background:#c04444; }
   .btn-volver-gray { background:#f5f5f5; color:var(--gray); }
   .btn-volver-gray:hover { background:#eee; }
+
+  /* ════════════════════════
+     TEMA OSCURO
+     Se activa agregando la clase .tema-oscuro al <html>
+  ════════════════════════ */
+  html.tema-oscuro body {
+    background: #15151a;
+    color: #eee;
+  }
+
+  html.tema-oscuro .page-title {
+    color: #f2f2f2;
+  }
+
+  html.tema-oscuro .badge-rol {
+    background: rgba(232,121,160,0.15);
+    border-color: rgba(232,121,160,0.3);
+  }
+
+  html.tema-oscuro .card,
+  html.tema-oscuro .edit-card,
+  html.tema-oscuro .modal {
+    background: #1e1e24;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  }
+
+  html.tema-oscuro .card-title {
+    color: #f2f2f2;
+    border-bottom-color: #2a2a31;
+  }
+
+  html.tema-oscuro .info-label {
+    color: #999;
+  }
+
+  html.tema-oscuro .info-value {
+    color: #eee;
+  }
+
+  html.tema-oscuro .info-value.empty {
+    color: #666;
+  }
+
+  html.tema-oscuro .alert-success {
+    background: rgba(163,177,138,0.15);
+    color: #b9c99e;
+    border-left-color: #a3b18a;
+  }
+
+  html.tema-oscuro .alert-danger {
+    background: rgba(224,85,85,0.15);
+    color: #f19d9d;
+  }
+
+  html.tema-oscuro .form-group label {
+    color: #999;
+  }
+
+  html.tema-oscuro .form-group input,
+  html.tema-oscuro .form-group textarea {
+    background: #26262e;
+    border-color: #33333c;
+    color: #eee;
+  }
+
+  html.tema-oscuro .form-group input[readonly] {
+    background: #1a1a1f;
+    color: #777;
+  }
+
+  html.tema-oscuro .btn-ghost {
+    background: #2a2a31;
+    color: #ccc;
+  }
+
+  html.tema-oscuro .btn-ghost:hover {
+    background: #33333c;
+  }
+
+  html.tema-oscuro .danger-card {
+    background: rgba(224,85,85,0.1);
+  }
+
+  html.tema-oscuro .danger-card p {
+    color: #aaa;
+  }
+
+  html.tema-oscuro .back-btn {
+    background: #1e1e24;
+    color: #aaa;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+  }
+
+  html.tema-oscuro .back-btn:hover {
+    background: #26262e;
+  }
+
+  html.tema-oscuro .modal-overlay {
+    background: rgba(0,0,0,0.6);
+  }
+
+  html.tema-oscuro .modal h3 {
+    color: #f2f2f2;
+  }
+
+  html.tema-oscuro .modal p {
+    color: #aaa;
+  }
+
+  html.tema-oscuro .btn-volver-gray {
+    background: #2a2a31;
+    color: #ccc;
+  }
+
+  html.tema-oscuro .btn-volver-gray:hover {
+    background: #33333c;
+  }
 </style>
+<?php include __DIR__ . '/../Tema/TemaHead.php'; ?>
 </head>
 <body>
 <div class="container">
@@ -552,5 +676,7 @@ $extra        = $extra        ?? [];
     }
   });
 </script>
+<?php include __DIR__ . '/../Views/ayuda_footer.php'; ?>
+
 </body>
 </html>
