@@ -109,8 +109,12 @@ if ($action == 'eliminar' && $_SERVER['REQUEST_METHOD'] == 'POST') {
 
 // COMPLETAR TURNO (Terapeuta)
 if ($action == 'completar' && $_SERVER['REQUEST_METHOD'] == 'POST') {
+    if ($id_Rol != 2 || !$id_Empleado) {
+        header("Location: TurnoController.php");
+        exit();
+    }
     $id_Turno  = intval($_POST['id_turno']);
-    $resultado = $modeloTurno->completarTurno($id_Turno);
+    $resultado = $modeloTurno->completarTurno($id_Turno, $id_Empleado);
     header("Location: TurnoController.php?status=" . ($resultado ? 'success' : 'error'));
     exit();
 }
@@ -252,8 +256,10 @@ $mes  = intval($_GET['mes']  ?? date('n'));
 $turnos_mes          = [];
 $dias_bloqueados     = [];
 $agendaHoy           = null;
+$pendientesAnteriores = null;
 $turnos_pendientes   = [];
 $turnos_cancelados   = [];
+$turnos_completados  = [];
 
 if ($id_Rol == 0 && $id_Paciente) {
     $turnos_mes      = $modeloTurno->obtenerTurnosMesPaciente($id_Paciente, $anio, $mes);
@@ -263,11 +269,13 @@ if ($id_Rol == 0 && $id_Paciente) {
     $turnos_mes      = $modeloTurno->obtenerTurnosMesTerapeuta($id_Empleado, $anio, $mes);
     $dias_bloqueados = array_column($modeloTurno->obtenerDiasBloqueados($id_Empleado), 'Fecha_Bloqueada');
     $agendaHoy       = $modeloTurno->obtenerAgendaDelDia($id_Empleado);
+    $pendientesAnteriores = $modeloTurno->obtenerPendientesAnteriores($id_Empleado);
 
 } elseif ($id_Rol == 3) {
     // Admin: solo carga las tablas, no necesita el calendario
     $turnos_pendientes  = $modeloTurno->obtenerTurnosPendientesAdmin();
     $turnos_cancelados  = $modeloTurno->obtenerTurnosCanceladosAdmin();
+    $turnos_completados = $modeloTurno->obtenerTurnosCompletadosAdmin();
 }
 
 $servicios_db  = $modeloTurno->obtenerServicios()->fetch_all(MYSQLI_ASSOC);

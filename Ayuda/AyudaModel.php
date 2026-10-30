@@ -25,7 +25,7 @@ class AyudaModel {
         $this->conexion = $conexion;
     }
 
-    /* ───────── Valores por defecto (se usan al crear las tablas y como respaldo del footer) ───────── */
+    /* Valores por defecto (se usan al crear las tablas y como respaldo del footer) */
     public static function defaults() {
         return [
             'faq' => [
@@ -50,7 +50,7 @@ class AyudaModel {
         ];
     }
 
-    /* ───────── Conexión propia (la usa el footer, que no recibe una conexión) ───────── */
+    /* Conexión propia (la usa el footer, que no recibe una conexión) */
     public static function conectar() {
         $c = new mysqli("localhost", "root", "345756", "gestionspabd");
         if ($c->connect_error) {
@@ -60,7 +60,6 @@ class AyudaModel {
         return $c;
     }
 
-    /* ───────── Datos para el footer público: si algo falla, devuelve los valores por defecto ───────── */
     public static function cargarParaFooter() {
         $defecto = self::defaults();
         try {
@@ -86,7 +85,7 @@ class AyudaModel {
         }
     }
 
-    /* ───────── Crea las tablas la primera vez y carga los textos iniciales ───────── */
+    /*  Crea las tablas la primera vez y carga los textos iniciales  */
     public function asegurarTablas() {
         $existiaFaq    = $this->tablaExiste('ayuda_faq');
         $existiaConfig = $this->tablaExiste('ayuda_config');
@@ -130,7 +129,7 @@ class AyudaModel {
         return $existe;
     }
 
-    /* ───────── Preguntas frecuentes ───────── */
+    /*  Preguntas frecuentes  */
     public function obtenerFaq($soloActivas = false) {
         $sql = "SELECT id_Faq, Pregunta, Respuesta, Orden, Activo FROM ayuda_faq"
              . ($soloActivas ? " WHERE Activo = 1" : "")
@@ -163,7 +162,7 @@ class AyudaModel {
         return $ok;
     }
 
-    /* ───────── Contacto y redes ───────── */
+    /*  Contacto y redes  */
     public function obtenerConfig() {
         $config = array_fill_keys(array_keys(self::CAMPOS), '');
         $result = $this->conexion->query("SELECT clave, valor FROM ayuda_config");
@@ -200,7 +199,7 @@ class AyudaModel {
         }
     }
 
-    /* ───────── Validaciones / limpieza ───────── */
+    /* Validaciones / limpieza  */
 
     // Devuelve la URL solo si es http(s); si no, cadena vacía (evita javascript:, data:, etc.)
     public static function urlSegura($url) {

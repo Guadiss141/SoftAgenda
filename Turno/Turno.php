@@ -147,6 +147,7 @@ public function crearTurno($id_Paciente, $id_Servicio, $id_Empleado, $fecha, $ho
         return $this->leer();
     }
 
+    // CAMBIO: ahora ordena de más nuevo a más viejo (antes ASC)
     public function obtenerTurnosPendientesAdmin() {
         $sql = "SELECT
                     t.id_Turno,
@@ -162,7 +163,7 @@ public function crearTurno($id_Paciente, $id_Servicio, $id_Empleado, $fecha, $ho
                 JOIN empleado emp    ON t.id_Empleado  = emp.id_Empleado
                 JOIN persona pe      ON emp.id_Persona = pe.id_Persona
                 WHERE t.Estado_Turno = 'Pendiente'
-                ORDER BY t.Fecha_Turno ASC, t.Hora_Turno ASC";
+                ORDER BY t.Fecha_Turno DESC, t.Hora_Turno DESC";
 
         return $this->conn->query($sql)->fetch_all(MYSQLI_ASSOC);
     }
@@ -187,6 +188,26 @@ public function crearTurno($id_Paciente, $id_Servicio, $id_Empleado, $fecha, $ho
         return $this->conn->query($sql)->fetch_all(MYSQLI_ASSOC);
     }
 
+    public function obtenerTurnosCompletadosAdmin() {
+        $sql = "SELECT
+                    t.id_Turno,
+                    t.Fecha_Turno,
+                    DATE_FORMAT(t.Hora_Turno, '%H:%i') AS Hora_Turno,
+                    s.Nombre_servicio,
+                    CONCAT(pp.Persona_Nombre, ' ', pp.Persona_Apellido) AS Cliente,
+                    CONCAT(pe.Persona_Nombre, ' ', pe.Persona_Apellido) AS Terapeuta
+                FROM turno t
+                JOIN servicio s      ON t.id_Servicio  = s.id_Servicio
+                JOIN paciente pac    ON t.id_Paciente  = pac.id_Paciente
+                JOIN persona pp      ON pac.id_Persona = pp.id_Persona
+                JOIN empleado emp    ON t.id_Empleado  = emp.id_Empleado
+                JOIN persona pe      ON emp.id_Persona = pe.id_Persona
+                WHERE t.Estado_Turno = 'Completado'
+                ORDER BY t.Fecha_Turno DESC, t.Hora_Turno DESC";
+
+        return $this->conn->query($sql)->fetch_all(MYSQLI_ASSOC);
+    }
+
     public function obtenerAgendaDelDia($id_empleado) {
         $query = "SELECT
                         t.id_Turno,
@@ -203,6 +224,31 @@ public function crearTurno($id_Paciente, $id_Servicio, $id_Empleado, $fecha, $ho
                   WHERE t.id_Empleado = ?
                   AND t.Fecha_Turno = CURDATE()
                   ORDER BY t.Hora_Turno ASC";
+
+        $stmt = $this->conn->prepare($query);
+        $stmt->bind_param("i", $id_empleado);
+        $stmt->execute();
+        return $stmt->get_result();
+    }
+
+    public function obtenerPendientesAnteriores($id_empleado) {
+        $query = "SELECT
+                        t.id_Turno,
+                        t.Fecha_Turno,
+                        DATE_FORMAT(t.Hora_Turno, '%H:%i') AS Hora_Turno,
+                        t.Estado_Turno,
+                        s.Nombre_servicio,
+                        p.Persona_Nombre   AS Cliente_Nombre,
+                        p.Persona_Apellido AS Cliente_Apellido,
+                        p.Persona_Telefono AS Cliente_Telefono
+                  FROM turno t
+                  JOIN servicio s   ON t.id_Servicio  = s.id_Servicio
+                  JOIN paciente pac ON t.id_Paciente  = pac.id_Paciente
+                  JOIN persona p    ON pac.id_Persona = p.id_Persona
+                  WHERE t.id_Empleado = ?
+                  AND t.Fecha_Turno < CURDATE()
+                  AND t.Estado_Turno = 'Pendiente'
+                  ORDER BY t.Fecha_Turno DESC, t.Hora_Turno DESC";
 
         $stmt = $this->conn->prepare($query);
         $stmt->bind_param("i", $id_empleado);
@@ -233,12 +279,17 @@ public function crearTurno($id_Paciente, $id_Servicio, $id_Empleado, $fecha, $ho
         }
         return $stmt->execute();
     }
-
-    public function completarTurno($id_turno) {
-        $sql  = "UPDATE turno SET Estado_Turno = 'Completado' WHERE id_Turno = ?";
+// turno completado por el terapeuta
+    public function completarTurno($id_turno, $id_empleado) {
+        $sql  = "UPDATE turno SET Estado_Turno = 'Completado'
+                 WHERE id_Turno = ?
+                 AND id_Empleado = ?
+                 AND Estado_Turno = 'Pendiente'
+                 AND Fecha_Turno <= CURDATE()";
         $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param("i", $id_turno);
-        return $stmt->execute();
+        $stmt->bind_param("ii", $id_turno, $id_empleado);
+        $stmt->execute();
+        return $stmt->affected_rows > 0;
     }
 
     public function obtenerServicios() {
@@ -364,7 +415,7 @@ public function crearTurno($id_Paciente, $id_Servicio, $id_Empleado, $fecha, $ho
         $rows = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
         return array_column($rows, 'hora');
     }
-
+//pa ver cuando se hace un turno, que no se pueda hacer en un horario que ya este ocupado por otro turno
     public function obtenerHorasOcupadasDelDia($fecha) {
         $sql = "SELECT 
                     DATE_FORMAT(t.Hora_Turno, '%H:%i') AS Hora_Turno,

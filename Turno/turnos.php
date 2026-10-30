@@ -57,82 +57,176 @@ $terapeutas_arr = $terapeutas_db ?? [];
   }
 
   /* ── LAYOUT ADMIN ── */
+  body.vista-admin {
+    background: linear-gradient(165deg, #F9DADE 0%, #F0B3BB 100%) fixed;
+  }
   .admin-wrapper {
-    max-width: 860px;
+    --cherry: #F0B3BB;
+    --blush: #F9DADE;
+    --porcelain: #FAF8F2;
+    --mint: #D3E8D8;
+    --mint-deep: #4f8a65;
+    --rose-deep: #B85670;
+    --ink: #4a2f36;
+    --muted: #9a7f86;
+    max-width: 920px;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
-    gap: 28px;
+    gap: 22px;
   }
-  .admin-header { text-align: center; padding: 10px 0 4px; }
+  .admin-header { text-align: center; padding: 10px 0 0; }
   .admin-header .title-turnos {
     font-family: 'Playfair Display', serif;
     font-size: 2.2rem; font-weight: 900;
-    color: var(--dark); letter-spacing: -1px; line-height: 1;
+    color: var(--ink); letter-spacing: -1px; line-height: 1;
   }
   .admin-header .title-month {
     font-family: 'Playfair Display', serif;
     font-size: 2.2rem; font-weight: 900;
-    color: var(--pink); letter-spacing: -1px;
+    color: var(--rose-deep); letter-spacing: -1px;
   }
   .sparkle {
     display: inline-block; font-size: 1.1rem; color: var(--pink);
     animation: sparkle 2s ease-in-out infinite; margin-left: 4px; vertical-align: top;
   }
+  .admin-header .sparkle { color: #A9D4B5; text-shadow: 0 1px 8px rgba(79,138,101,0.35); }
   @keyframes sparkle {
     0%,100%{opacity:1;transform:scale(1) rotate(0deg);}
     50%{opacity:0.6;transform:scale(1.3) rotate(20deg);}
   }
 
-  /* ── TABLAS ADMIN ── */
-  .table-card {
-    background: #fff;
-    border-radius: 24px;
-    padding: 24px 22px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-    overflow-x: auto;
+  .admin-wrapper .back-btn { background: var(--porcelain); color: var(--rose-deep); box-shadow: 0 6px 18px rgba(184,86,112,0.15); }
+  .admin-wrapper .back-btn:hover { background: var(--blush); }
+
+  /* ── TARJETA CON PESTAÑAS ── */
+  .admin-card {
+    background: var(--porcelain);
+    border-radius: 32px;
+    padding: 22px 24px 20px;
+    box-shadow: 0 18px 50px rgba(184,86,112,0.20);
     transition: background 0.3s;
   }
-  .table-card-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.15rem; font-weight: 700;
-    color: var(--dark); margin-bottom: 16px;
-    display: flex; align-items: center; gap: 8px;
+  .admin-tabs {
+    display: flex; gap: 6px;
+    background: var(--blush);
+    padding: 6px;
+    border-radius: 999px;
   }
-  .table-card-title .badge {
-    font-family: 'DM Sans', sans-serif;
+  .admin-tab {
+    flex: 1;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    border: none; background: transparent; cursor: pointer;
+    font-family: 'DM Sans', sans-serif; font-size: 0.9rem; font-weight: 500;
+    color: var(--rose-deep);
+    padding: 12px 14px;
+    border-radius: 999px;
+    transition: background 0.25s, color 0.25s, box-shadow 0.25s;
+  }
+  .admin-tab:hover:not(.active) { background: rgba(255,255,255,0.45); }
+  .admin-tab.active {
+    background: var(--porcelain);
+    color: var(--ink);
+    box-shadow: 0 4px 14px rgba(184,86,112,0.20);
+  }
+  .admin-tab .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .dot-pendientes { background: var(--cherry); }
+  .dot-realizadas { background: #9CCBA9; }
+  .dot-canceladas { background: #D99A9A; }
+  .admin-tab .count {
     font-size: 0.72rem; font-weight: 500;
-    padding: 3px 9px; border-radius: 20px;
+    padding: 2px 9px; border-radius: 999px;
+    background: rgba(255,255,255,0.65);
+    color: var(--rose-deep);
   }
-  .badge-pendiente { background: var(--pink-pale); color: var(--pink); }
-  .badge-cancelado { background: var(--red-pale);  color: var(--red);  }
+  .admin-tab.active .count-pendientes { background: var(--blush); color: var(--rose-deep); }
+  .admin-tab.active .count-realizadas { background: var(--mint);  color: var(--mint-deep); }
+  .admin-tab.active .count-canceladas { background: #F4E1E1;      color: #B36A6A; }
 
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; animation: tabIn 0.35s ease; }
+  @keyframes tabIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: none; }
+  }
+
+  /* Encabezado del panel + buscador */
+  .panel-heading {
+    padding: 22px 6px 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .panel-heading h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.35rem; font-weight: 700; color: var(--ink);
+  }
+  .panel-heading p { font-size: 0.82rem; color: var(--muted); margin-top: 2px; }
+
+  .buscador-turnos {
+    width: 280px; max-width: 100%;
+    padding: 10px 16px;
+    border: 1.5px solid var(--blush);
+    border-radius: 999px;
+    background: #fff;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem; color: var(--ink);
+    outline: none;
+    transition: border 0.2s, box-shadow 0.2s;
+  }
+  .buscador-turnos:focus {
+    border-color: var(--rose-deep);
+    box-shadow: 0 0 0 3px rgba(184,86,112,0.15);
+  }
+  .sin-resultados { display: none; }
+
+  /* ── TABLAS ADMIN ── */
+  .table-scroll { max-height: 55vh; overflow: auto; margin-top: 6px; padding-right: 4px; }
   .admin-table {
     width: 100%;
-    border-collapse: collapse;
-    font-size: 0.84rem;
-    min-width: 480px;
+    border-collapse: separate;
+    border-spacing: 0 8px;
+    font-size: 0.86rem;
+    min-width: 560px;
   }
   .admin-table thead th {
+    position: sticky; top: 0; z-index: 1;
+    background: var(--porcelain);
     text-align: left;
-    font-size: 0.68rem; font-weight: 500;
-    letter-spacing: 1px; text-transform: uppercase;
-    color: var(--gray); padding: 0 12px 10px;
-    border-bottom: 1.5px solid #f0f0f0;
+    font-size: 0.66rem; font-weight: 500;
+    letter-spacing: 1.2px; text-transform: uppercase;
+    color: var(--rose-deep); padding: 6px 14px;
   }
-  .admin-table tbody tr { transition: background 0.15s; }
-  .admin-table tbody tr:hover { background: #fdf5f8; }
   .admin-table tbody td {
-    padding: 11px 12px; color: var(--dark);
-    border-bottom: 1px solid #f5f5f5; vertical-align: middle;
+    background: #fff; color: var(--ink);
+    padding: 13px 14px; vertical-align: middle;
+    transition: background 0.15s;
   }
-  .admin-table tbody tr:last-child td { border-bottom: none; }
-  .td-hora         { font-weight: 500; color: var(--pink); white-space: nowrap; }
-  .td-hora-cancelado { font-weight: 500; color: var(--red); white-space: nowrap; }
-  .td-fecha        { color: var(--gray); font-size: 0.8rem; white-space: nowrap; }
-  .td-nombre       { font-weight: 500; }
-  .td-servicio     { color: var(--gray); font-size: 0.8rem; }
-  .empty-table     { text-align: center; color: var(--gray-mid); padding: 24px 0; font-size: 0.85rem; }
+  .admin-table tbody td:first-child { border-radius: 16px 0 0 16px; }
+  .admin-table tbody td:last-child  { border-radius: 0 16px 16px 0; }
+  .admin-table tbody tr:hover td { background: #FDEFF1; }
+  .td-fecha    { color: var(--muted); font-size: 0.8rem; white-space: nowrap; }
+  .td-nombre   { font-weight: 500; }
+  .td-servicio { color: var(--muted); font-size: 0.82rem; }
+  .hora-pill {
+    display: inline-block; padding: 4px 11px; border-radius: 999px;
+    font-size: 0.8rem; font-weight: 500; white-space: nowrap;
+  }
+  .hora-pendientes { background: var(--blush); color: var(--rose-deep); }
+  .hora-realizadas { background: var(--mint);  color: var(--mint-deep); }
+  .hora-canceladas { background: #F4E1E1;      color: #B36A6A; }
+  .empty-state { text-align: center; padding: 48px 0 36px; color: var(--muted); font-size: 0.9rem; }
+  .empty-state .spark { display: block; font-size: 1.8rem; color: var(--cherry); margin-bottom: 8px; }
+
+  @media (max-width: 700px) {
+    .admin-card { padding: 14px; border-radius: 26px; }
+    .admin-tab { padding: 10px 6px; font-size: 0.78rem; gap: 5px; }
+    .admin-tab .dot { display: none; }
+    .table-scroll { max-height: 60vh; }
+    .buscador-turnos { width: 100%; }
+  }
 
   /* ── CALENDARIO ── */
   .card {
@@ -419,7 +513,6 @@ $terapeutas_arr = $terapeutas_db ?? [];
     color: #f2f2f2;
   }
 
-  html.tema-oscuro .table-card,
   html.tema-oscuro .card,
   html.tema-oscuro .panel-card {
     background: #1e1e24;
@@ -430,34 +523,25 @@ $terapeutas_arr = $terapeutas_db ?? [];
     background: radial-gradient(circle, rgba(232,121,160,0.1) 0%, transparent 70%);
   }
 
-  html.tema-oscuro .table-card-title {
-    color: #f2f2f2;
-  }
-
-  html.tema-oscuro .badge-pendiente {
-    background: rgba(232,121,160,0.15);
-  }
-
-  html.tema-oscuro .badge-cancelado {
-    background: rgba(224,85,85,0.15);
-  }
-
-  html.tema-oscuro .admin-table thead th {
-    border-bottom-color: #2a2a31;
-  }
-
-  html.tema-oscuro .admin-table tbody tr:hover {
-    background: #26262e;
-  }
-
-  html.tema-oscuro .admin-table tbody td {
-    color: #eee;
-    border-bottom-color: #2a2a31;
-  }
-
-  html.tema-oscuro .empty-table {
-    color: #666;
-  }
+  html.tema-oscuro .admin-card { background: #1e1e24; box-shadow: 0 18px 50px rgba(0,0,0,0.4); }
+  html.tema-oscuro .admin-tabs { background: #26262e; }
+  html.tema-oscuro .admin-tab { color: #d9a0ae; }
+  html.tema-oscuro .admin-tab:hover:not(.active) { background: rgba(255,255,255,0.06); }
+  html.tema-oscuro .admin-tab.active { background: #33333c; color: #f2f2f2; box-shadow: none; }
+  html.tema-oscuro .admin-tab .count { background: rgba(255,255,255,0.08); }
+  html.tema-oscuro .admin-tab.active .count-pendientes { background: rgba(240,179,187,0.18); color: #F0B3BB; }
+  html.tema-oscuro .admin-tab.active .count-realizadas { background: rgba(211,232,216,0.16); color: #D3E8D8; }
+  html.tema-oscuro .admin-tab.active .count-canceladas { background: rgba(217,154,154,0.18); color: #E3AAAA; }
+  html.tema-oscuro .panel-heading h2 { color: #f2f2f2; }
+  html.tema-oscuro .panel-heading p { color: #999; }
+  html.tema-oscuro .buscador-turnos { background: #26262e; border-color: #33333c; color: #eee; }
+  html.tema-oscuro .admin-table thead th { background: #1e1e24; color: #d9a0ae; }
+  html.tema-oscuro .admin-table tbody td { background: #26262e; color: #eee; }
+  html.tema-oscuro .admin-table tbody tr:hover td { background: #2f2f38; }
+  html.tema-oscuro .hora-pendientes { background: rgba(240,179,187,0.16); color: #F0B3BB; }
+  html.tema-oscuro .hora-realizadas { background: rgba(211,232,216,0.16); color: #D3E8D8; }
+  html.tema-oscuro .hora-canceladas { background: rgba(217,154,154,0.16); color: #E3AAAA; }
+  html.tema-oscuro .empty-state { color: #888; }
 
   html.tema-oscuro .nav-btn:hover {
     background: rgba(232,121,160,0.15);
@@ -625,71 +709,126 @@ $terapeutas_arr = $terapeutas_db ?? [];
 </style>
 <?php include __DIR__ . '/../Tema/TemaHead.php'; ?>
 </head>
-<body>
+<body class="<?= $id_Rol == 3 ? 'vista-admin' : '' ?>">
 
 <!-- Toasts -->
 <div class="toast-container" id="toastContainer"></div>
 
 <?php if ($id_Rol == 3): ?>
 <!-- ════ VISTA ADMIN ════ -->
+<?php
+$tabs_admin = [
+  'pendientes' => ['label' => 'Pendientes', 'titulo' => 'Citas pendientes', 'desc' => 'Turnos que todavía no se atendieron',      'datos' => $turnos_pendientes],
+  'realizadas' => ['label' => 'Realizadas', 'titulo' => 'Citas realizadas', 'desc' => 'Servicios que los terapeutas ya finalizaron', 'datos' => $turnos_completados],
+  'canceladas' => ['label' => 'Canceladas', 'titulo' => 'Citas canceladas', 'desc' => 'Turnos que se dieron de baja',                'datos' => $turnos_cancelados],
+];
+?>
 <div class="admin-wrapper">
   <div class="admin-header">
     <div class="title-turnos">TURNOS <span class="sparkle">✦</span></div>
     <div class="title-month">HISTORIAL GENERAL</div>
   </div>
 
-  <div class="table-card">
-    <div class="table-card-title">
-      Citas pendientes
-      <span class="badge badge-pendiente"><?= count($turnos_pendientes) ?></span>
+  <div class="admin-card">
+    <div class="admin-tabs" role="tablist">
+      <?php $primero = true; foreach ($tabs_admin as $clave => $tab): ?>
+      <button type="button" role="tab" class="admin-tab<?= $primero ? ' active' : '' ?>"
+              data-tab="<?= $clave ?>" aria-selected="<?= $primero ? 'true' : 'false' ?>">
+        <span class="dot dot-<?= $clave ?>"></span>
+        <?= $tab['label'] ?>
+        <span class="count count-<?= $clave ?>"><?= count($tab['datos']) ?></span>
+      </button>
+      <?php $primero = false; endforeach; ?>
     </div>
-    <?php if (empty($turnos_pendientes)): ?>
-      <div class="empty-table">No hay citas pendientes</div>
-    <?php else: ?>
-    <table class="admin-table">
-      <thead><tr><th>Fecha</th><th>Hora</th><th>Cliente</th><th>Terapeuta</th><th>Servicio</th></tr></thead>
-      <tbody>
-        <?php foreach ($turnos_pendientes as $t): ?>
-        <tr>
-          <td class="td-fecha"><?= date('d/m/Y', strtotime($t['Fecha_Turno'])) ?></td>
-          <td class="td-hora"><?= htmlspecialchars($t['Hora_Turno']) ?> hs</td>
-          <td class="td-nombre"><?= htmlspecialchars($t['Cliente']) ?></td>
-          <td><?= htmlspecialchars($t['Terapeuta']) ?></td>
-          <td class="td-servicio"><?= htmlspecialchars($t['Nombre_servicio']) ?></td>
-        </tr>
-        <?php endforeach; ?>
-      </tbody>
-    </table>
-    <?php endif; ?>
-  </div>
 
-  <div class="table-card">
-    <div class="table-card-title">
-      Citas canceladas
-      <span class="badge badge-cancelado"><?= count($turnos_cancelados) ?></span>
-    </div>
-    <?php if (empty($turnos_cancelados)): ?>
-      <div class="empty-table">No hay citas canceladas</div>
-    <?php else: ?>
-    <table class="admin-table">
-      <thead><tr><th>Fecha</th><th>Hora</th><th>Cliente</th><th>Terapeuta</th><th>Servicio</th></tr></thead>
-      <tbody>
-        <?php foreach ($turnos_cancelados as $t): ?>
-        <tr>
-          <td class="td-fecha"><?= date('d/m/Y', strtotime($t['Fecha_Turno'])) ?></td>
-          <td class="td-hora-cancelado"><?= htmlspecialchars($t['Hora_Turno']) ?> hs</td>
-          <td class="td-nombre"><?= htmlspecialchars($t['Cliente']) ?></td>
-          <td><?= htmlspecialchars($t['Terapeuta']) ?></td>
-          <td class="td-servicio"><?= htmlspecialchars($t['Nombre_servicio']) ?></td>
-        </tr>
-        <?php endforeach; ?>
-      </tbody>
-    </table>
-    <?php endif; ?>
+    <?php $primero = true; foreach ($tabs_admin as $clave => $tab): ?>
+    <section class="tab-panel<?= $primero ? ' active' : '' ?>" id="tab-<?= $clave ?>" role="tabpanel">
+      <div class="panel-heading">
+        <div>
+          <h2><?= $tab['titulo'] ?></h2>
+          <p><?= $tab['desc'] ?></p>
+        </div>
+        <input type="search" class="buscador-turnos"
+               placeholder="Buscar cliente o terapeuta…" autocomplete="off">
+      </div>
+
+      <?php if (empty($tab['datos'])): ?>
+        <div class="empty-state"><span class="spark">✦</span>No hay <?= strtolower($tab['titulo']) ?></div>
+      <?php else: ?>
+      <div class="table-scroll">
+        <table class="admin-table">
+          <thead><tr><th>Fecha</th><th>Hora</th><th>Cliente</th><th>Terapeuta</th><th>Servicio</th></tr></thead>
+          <tbody>
+            <?php foreach ($tab['datos'] as $t): ?>
+            <tr data-busqueda="<?= htmlspecialchars($t['Cliente'] . ' ' . $t['Terapeuta']) ?>">
+              <td class="td-fecha"><?= date('d/m/Y', strtotime($t['Fecha_Turno'])) ?></td>
+              <td><span class="hora-pill hora-<?= $clave ?>"><?= htmlspecialchars($t['Hora_Turno']) ?> hs</span></td>
+              <td class="td-nombre"><?= htmlspecialchars($t['Cliente']) ?></td>
+              <td><?= htmlspecialchars($t['Terapeuta']) ?></td>
+              <td class="td-servicio"><?= htmlspecialchars($t['Nombre_servicio']) ?></td>
+            </tr>
+            <?php endforeach; ?>
+          </tbody>
+        </table>
+      </div>
+      <div class="empty-state sin-resultados"><span class="spark">✦</span>No se encontraron turnos</div>
+      <?php endif; ?>
+    </section>
+    <?php $primero = false; endforeach; ?>
   </div>
 
   <a href="../index.php" class="back-btn">← Volver al inicio</a>
 </div>
+
+<script>
+(function () {
+  const tabs   = document.querySelectorAll('.admin-tab');
+  const panels = document.querySelectorAll('.tab-panel');
+
+  function mostrar(clave) {
+    tabs.forEach(t => {
+      const activa = t.dataset.tab === clave;
+      t.classList.toggle('active', activa);
+      t.setAttribute('aria-selected', activa);
+    });
+    panels.forEach(p => p.classList.toggle('active', p.id === 'tab-' + clave));
+  }
+
+  tabs.forEach(t => t.addEventListener('click', () => {
+    mostrar(t.dataset.tab);
+    history.replaceState(null, '', '#' + t.dataset.tab);
+  }));
+
+  const inicial = location.hash.slice(1);
+  if (inicial && document.getElementById('tab-' + inicial)) mostrar(inicial);
+
+  // ── Buscador compartido entre las 3 pestañas ──
+  const inputsBusqueda = document.querySelectorAll('.buscador-turnos');
+  const normalizar = txt => txt.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+
+  function filtrarTurnos(valor) {
+    const q = normalizar(valor.trim());
+    panels.forEach(panel => {
+      const filas = panel.querySelectorAll('tbody tr');
+      let visibles = 0;
+      filas.forEach(fila => {
+        const coincide = normalizar(fila.dataset.busqueda).includes(q);
+        fila.style.display = coincide ? '' : 'none';
+        if (coincide) visibles++;
+      });
+      const sin = panel.querySelector('.sin-resultados');
+      if (sin) sin.style.display = (filas.length && visibles === 0) ? 'block' : 'none';
+    });
+  }
+
+  inputsBusqueda.forEach(input => {
+    input.addEventListener('input', () => {
+      inputsBusqueda.forEach(o => { if (o !== input) o.value = input.value; });
+      filtrarTurnos(input.value);
+    });
+  });
+})();
+</script>
 
 <?php else: ?>
 <!-- ════ VISTA PACIENTE / TERAPEUTA ════ -->
@@ -774,15 +913,36 @@ $terapeutas_arr = $terapeutas_db ?? [];
             <p><strong><?= substr($cita['Hora_Turno'], 0, 5) ?> hs</strong> · <?= htmlspecialchars($cita['Nombre_servicio']) ?></p>
             <p><?= htmlspecialchars($cita['Cliente_Nombre'] . ' ' . $cita['Cliente_Apellido']) ?></p>
             <p>📞 <?= htmlspecialchars($cita['Cliente_Telefono']) ?></p>
+            <?php if ($cita['Estado_Turno'] === 'Pendiente'): ?>
             <form method="POST" action="TurnoController.php?action=completar" style="margin-top:8px;">
               <input type="hidden" name="id_turno" value="<?= $cita['id_Turno'] ?>">
               <button type="submit" class="add-btn" style="font-size:0.8rem;padding:8px;">✓ Finalizar servicio</button>
             </form>
+            <?php else: ?>
+            <p style="color:var(--gray);font-size:0.8rem;"><?= htmlspecialchars($cita['Estado_Turno']) ?></p>
+            <?php endif; ?>
           </div>
         <?php endwhile; ?>
       <?php else: ?>
         <div class="empty-appt">Sin citas para hoy</div>
       <?php endif; ?>
+    </div>
+    <?php endif; ?>
+
+    <?php if ($id_Rol == 2 && $pendientesAnteriores && $pendientesAnteriores->num_rows > 0): ?>
+    <div class="panel-card">
+      <div class="panel-title">Pendientes de días anteriores</div>
+      <?php while ($cita = $pendientesAnteriores->fetch_assoc()): ?>
+        <div class="agenda-item">
+          <p><strong><?= date('d/m/Y', strtotime($cita['Fecha_Turno'])) ?> · <?= substr($cita['Hora_Turno'], 0, 5) ?> hs</strong> · <?= htmlspecialchars($cita['Nombre_servicio']) ?></p>
+          <p><?= htmlspecialchars($cita['Cliente_Nombre'] . ' ' . $cita['Cliente_Apellido']) ?></p>
+          <p>📞 <?= htmlspecialchars($cita['Cliente_Telefono']) ?></p>
+          <form method="POST" action="TurnoController.php?action=completar" style="margin-top:8px;">
+            <input type="hidden" name="id_turno" value="<?= $cita['id_Turno'] ?>">
+            <button type="submit" class="add-btn" style="font-size:0.8rem;padding:8px;">✓ Finalizar servicio</button>
+          </form>
+        </div>
+      <?php endwhile; ?>
     </div>
     <?php endif; ?>
 

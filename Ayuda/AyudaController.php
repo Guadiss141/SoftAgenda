@@ -1,8 +1,6 @@
 <?php
-/*
- * AyudaController.php — Pantalla del administrador para configurar el módulo de ayuda
- * (preguntas frecuentes, datos de contacto y redes sociales).
- */
+/* Pantalla del administrador para configurar el módulo de ayuda 
+(preguntas frecuentes, datos de contacto y redes sociales).*/
 if (session_status() === PHP_SESSION_NONE) {
     session_set_cookie_params(0, '/');
     session_start();
@@ -62,7 +60,7 @@ function ayuda_validar_faq($post) {
     return [[$pregunta, $respuesta, $orden, $activo], $errores];
 }
 
-/* ═════════ Procesar formularios (POST → redirección) ═════════ */
+/* Procesar formularios (POST → redirección)  */
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (!hash_equals($csrf, $_POST['csrf'] ?? '')) {
@@ -148,7 +146,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-/* ═════════ Mostrar ═════════ */
+/* Mostrar */
 $flash = $_SESSION['ayuda_flash'] ?? null;
 unset($_SESSION['ayuda_flash']);
 
